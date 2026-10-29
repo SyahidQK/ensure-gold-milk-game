@@ -6,12 +6,12 @@
 
   var $ = function (sel) { return document.querySelector(sel); };
   var stage = $('#stage');
-  // flow: game → (glass full) summary → video → info → game
-  var screens = { game: $('#game'), video: $('#video'), info: $('#info') };
+  // flow: info (main page) → start → game → (glass full) summary → video → info
+  var screens = { info: $('#info'), game: $('#game'), video: $('#video') };
 
   var GAME_FOODS = FOODS.filter(function (f) { return f.slot && f.fill > 0; });
 
-  var playAgainBtn = $('#playAgainBtn');
+  var startBtn = $('#startBtn');
   var gameFoods = $('#gameFoods');
   var milk = $('#milk');
   var glassSvg = $('#glassSvg');
@@ -335,7 +335,7 @@
     var left = Math.round(CFG.placeholderMs / 1000);
     vpCount.textContent = left;
     (function tick() {
-      if (left <= 0) { showInfo(); return; }
+      if (left <= 0) { goHome(); return; }
       vpCount.textContent = left;
       left--;
       later(tick, 1000);
@@ -344,43 +344,21 @@
 
   video.addEventListener('error', showPlaceholder);
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
-  video.addEventListener('ended', showInfo);
+  video.addEventListener('ended', goHome);
 
-  /* ---------------- HMB info (last page) ---------------- */
-  FOODS.forEach(function (f) {
-    var card = document.createElement('div');
-    card.className = 'food-btn';
-    card.innerHTML =
-      '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
-      '<div class="food-num">~' + fmt(f.target) + '</div>' +
-      '<div class="food-name">' + f.name + '</div>';
-    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(card);
-    new Image().src = f.icon;  // preload
+  /* ---------------- MAIN PAGE: HMB info (right-wall panel) + start ---------------- */
+  ['leucine', 'hmb'].forEach(function (group) {
+    var list = document.querySelector('.food-grid[data-group="' + group + '"]');
+    list.innerHTML = FOODS.filter(function (f) { return f.group === group; }).map(function (f) {
+      new Image().src = f.icon;  // preload
+      return '<div class="food-btn">' +
+        '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
+        '<div class="food-num">~' + fmt(f.target) + '</div>' +
+        '<div class="food-name">' + f.name + '</div></div>';
+    }).join('<div class="wall-or">OR</div>');
   });
 
-  var infoCount = $('#infoCount');
-  function showInfo() {
-    clearTimers();
-    video.pause();
-    video.removeAttribute('src');
-    video.load();
-    show('info');
-    // visible countdown on the button so the page never looks stuck
-    var left = Math.round(CFG.infoMs / 1000);
-    (function tick() {
-      if (left <= 0) { goHome(); return; }
-      infoCount.textContent = ' · ' + left;
-      left--;
-      later(tick, 1000);
-    })();
-  }
-
-  // tapping anywhere on the last page goes straight back to the game
-  screens.info.addEventListener('pointerdown', function (e) {
-    e.preventDefault();
-    if (state.screen === 'info') goHome();
-  });
-  playAgainBtn.addEventListener('click', goHome);
+  startBtn.addEventListener('click', startGame);
 
   /* ---------------- reset / idle ---------------- */
   function goHome() {
@@ -388,16 +366,17 @@
     video.pause();
     video.removeAttribute('src');
     video.load();
-    startGame();
+    resetRound();
+    show('info');
   }
 
-  // a half-filled glass left behind empties itself for the next player
+  // a game abandoned mid-way goes back to the main page for the next player
   var idleTimer = null;
   function bumpIdle() {
     clearTimeout(idleTimer);
-    if (state.screen !== 'game') return;  // video and info pages move on by themselves
+    if (state.screen !== 'game') return;  // main page waits; video moves on by itself
     idleTimer = setTimeout(function () {
-      if (state.screen === 'game' && state.phase === 'play' && state.total > 0) resetRound();
+      if (state.screen === 'game' && state.phase === 'play') goHome();
     }, CFG.idleResetMs);
   }
   document.addEventListener('pointerdown', bumpIdle, true);
@@ -422,13 +401,13 @@
   // preload remaining art
   ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png'].forEach(function (src) { new Image().src = src; });
 
-  // debug helper for testing in a browser console: GAME.go('game'|'video'|'info'), GAME.tap('avocado')
+  // debug helper for testing in a browser console: GAME.go('home'|'game'|'video'), GAME.tap('avocado')
   window.GAME = {
     state: state,
     bgm: bgm,
     go: function (name) {
       if (name === 'video') playVideo();
-      else if (name === 'info') showInfo();
+      else if (name === 'game') startGame();
       else goHome();
     },
     tap: function (id) {
@@ -438,5 +417,5 @@
     }
   };
 
-  startGame();
+  goHome();
 })();

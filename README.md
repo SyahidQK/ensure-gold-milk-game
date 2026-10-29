@@ -3,15 +3,16 @@
 Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no internet needed.
 
 ## Flow
-1. **Fill the glass** (first screen) – 6 foods around the glass. Each tap adds a hidden amount:
+1. **Main page** – the right-wall HMB panel: intro line, "One would need to eat", the whey → leucine → HMB pills,
+   and the 8 foods (leucine: ~50 eggs, ~11 beef steaks, ~7 chicken breasts, ~10 cups of soybeans;
+   HMB: ~3,000 avocados, ~3,000 asparagus, ~6,500 cauliflower, ~750 catfish). The game only starts on **Press to start**.
+2. **Fill the glass** – 6 foods around the glass. Each tap adds a hidden amount:
    Avocado 1%, Asparagus 2%, Catfish 3%, Eggs 4%, Beef Steak 5%, Chicken 6%.
    Mixing foods takes about 23–35 taps. The glass stops at 100% and the round ends — no overflow, no timer.
-2. **Glass full!** – summary of how many times each food was tapped (auto-continues after 9 s, or tap "Watch the video").
-3. **HMB video** (background music muted).
-4. **Did you know?** – right-wall HMB info + 8 foods (leucine: eggs, steak, chicken, soybeans; HMB: avocado, asparagus, cauliflower, catfish).
-   Tap anywhere or **Play again** (or wait 10 s, counted down on the button) → back to the game with an empty glass.
+3. **Glass full!** – summary of how many times each food was tapped (auto-continues after 9 s, or tap "Watch the video").
+4. **HMB video** (background music muted) → back to the main page.
 
-A half-filled glass left untouched for 60 s empties itself for the next player.
+A game left untouched for 60 s goes back to the main page for the next player.
 
 ## Run at the booth
 Recommended (local server, so the video can seek):

@@ -3,12 +3,11 @@
  * Food figures come from the booth "Right Wall" panel (HMB Booth.pdf).
  */
 window.GAME_CONFIG = {
-  idleResetMs: 60000,      // no touch for this long mid-game → glass empties for the next player
+  idleResetMs: 60000,      // no touch for this long mid-game → back to the main page
   fullMs: 1800,            // pause on the full glass before the summary
   summaryMs: 9000,         // summary auto-continues to the video after this long
   videoSrc: 'assets/video/hmb.mp4',
   placeholderMs: 6000,     // shown while the client video is not yet in place
-  infoMs: 10000,           // HMB info page (last page) returns to the game after this long; a tap returns at once
   sound: true,             // tap / win sound effects
   bgmSrc: 'assets/audio/bgm.mp3',
   bgmStartAt: 9,           // seconds into the track where the BGM starts (and each loop restarts)
@@ -20,7 +19,7 @@ window.GAME_CONFIG = {
  * fill: % of the glass one tap adds (not shown to players). The glass stops at
  *       100%; lower values = more taps to fill (current mix ≈ 30 taps).
  * slot: position around the glass on the game screen (left-1..3 / right-1..3),
- *       null = HMB info page only.
+ *       null = main info page only.
  */
 window.FOODS = [
   // Foods high in Leucine

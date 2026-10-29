@@ -9,18 +9,16 @@
 <body>
   <div id="stage">
 
-    <!-- ============ LAST SCREEN: HMB INFO (right-wall content, shown after the video) ============ -->
-    <section id="info" class="screen" aria-label="About HMB">
+    <!-- ============ MAIN PAGE: HMB INFO (right-wall panel) + START ============ -->
+    <section id="info" class="screen is-active" aria-label="About HMB">
       <div class="select-bg" aria-hidden="true"></div>
 
-      <header class="select-header">
-        <div class="logo-badge"><img src="assets/ensure-gold-logo.png" alt="Ensure Gold"></div>
-        <p class="intro"><span class="gold">HMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
-        <h1 class="select-title">Did you know?</h1>
-      </header>
+      <div class="wall">
+        <img class="wall-logo" src="assets/ensure-gold-logo.png" alt="Ensure Gold">
+        <p class="wall-intro"><span class="gold">HMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
+        <div class="wall-need">One would need to eat:</div>
 
       <div class="need-row">
-        <div class="need-label">One would need to eat:</div>
         <div class="pill pill-navy"><span class="pill-ico">
           <svg viewBox="0 0 40 40"><path d="M6 26c4-12 8-12 12 0s8 12 12 0 6-8 6-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
         </span><span><b>~300g</b> of whey protein a day from foods high in leucine</span></div>
@@ -32,24 +30,27 @@
         <div class="pill pill-gold"><span class="pill-ico pill-ico-hex">HMB</span><span>5% of this would be converted to <b>~1.5g</b> of HMB</span></div>
       </div>
 
-      <div class="food-cards">
-        <div class="food-card">
-          <div class="card-head">Foods high in Leucine</div>
+      <div class="wall-cols">
+        <div class="wall-col">
+          <div class="wall-head">Foods high in Leucine</div>
+          <div class="wall-arrow" aria-hidden="true"></div>
           <div class="food-grid" data-group="leucine"></div>
         </div>
-        <div class="food-card">
-          <div class="card-head">Foods with HMB</div>
+        <div class="wall-col">
+          <div class="wall-head">Foods with HMB</div>
+          <div class="wall-arrow" aria-hidden="true"></div>
           <div class="food-grid" data-group="hmb"></div>
         </div>
       </div>
+      </div>
 
-      <button id="playAgainBtn" class="start-btn">
-        <span class="start-text">Play again</span><span id="infoCount" class="start-count"></span>
+      <button id="startBtn" class="start-btn">
+        <span class="start-text">Press to start</span>
       </button>
     </section>
 
-    <!-- ============ FIRST SCREEN: FILL THE GLASS ============ -->
-    <section id="game" class="screen is-active" aria-label="Fill the glass">
+    <!-- ============ GAME: FILL THE GLASS ============ -->
+    <section id="game" class="screen" aria-label="Fill the glass">
       <h2 class="game-title">Tap the food buttons to fill up the glass<br>of Ensure Gold!!</h2>
       <div class="game-rule">Keep tapping until the glass is <b>full</b>!</div>
 
@@ -122,7 +123,7 @@
         <img src="assets/ensure-gold-logo.png" alt="Ensure Gold" class="vp-logo">
         <div class="vp-title">HMB Video</div>
         <div class="vp-sub">Coming soon</div>
-        <div class="vp-count">Continuing in <span id="vpCount">6</span>s</div>
+        <div class="vp-count">Back to start in <span id="vpCount">6</span>s</div>
       </div>
     </section>
 
