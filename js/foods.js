@@ -3,11 +3,10 @@
  * Food figures come from the booth "Right Wall" panel (HMB Booth.pdf).
  */
 window.GAME_CONFIG = {
-  tapsToFill: 20,          // average taps needed to fill the glass
-  tapRandomMin: 0.6,       // each tap adds target/tapsToFill × random(min..max)
-  tapRandomMax: 1.4,
-  idleResetMs: 60000,      // no touch for this long on screens 1–2 → back to start
-  celebrateMs: 3500,       // how long the "Glass full!" card shows before the video
+  idleResetMs: 60000,      // no touch for this long on the intro/game → back to start
+  overflowMs: 2600,        // how long the "Too much!" message shows before the glass resets
+  perfectMs: 1800,         // pause on the perfectly full glass before the summary
+  summaryMs: 9000,         // summary auto-continues to the video after this long
   videoSrc: 'assets/video/hmb.mp4',
   placeholderMs: 6000,     // shown while the client video is not yet in place
   sound: true,             // tap / win sound effects
@@ -15,18 +14,23 @@ window.GAME_CONFIG = {
   bgmStartAt: 9,           // seconds into the track where the BGM starts (and each loop restarts)
   bgmVolume: 0.6,          // 0–1
   bgmFadeMs: 800           // fade when muting for the video / unmuting after
-
 };
 
+/*
+ * fill: % of the glass one tap adds (shown on the button). Keep every value a
+ *       multiple of the smallest one so exactly 100% is always reachable.
+ * slot: position around the glass on the game screen (left-1..3 / right-1..3),
+ *       null = intro screen only.
+ */
 window.FOODS = [
   // Foods high in Leucine
-  { id: 'eggs',        group: 'leucine', target: 50,   name: 'Eggs',                         word: 'eggs',           icon: 'assets/icons/eggs.png' },
-  { id: 'steak',       group: 'leucine', target: 11,   name: 'Beef Steaks',                  word: 'beef steak',     icon: 'assets/icons/steak.png' },
-  { id: 'chicken',     group: 'leucine', target: 7,    name: 'Chicken Breasts',              word: 'chicken breast', icon: 'assets/icons/chicken.png' },
-  { id: 'soybeans',    group: 'leucine', target: 10,   name: 'Cups of Soybeans',             word: 'soybeans',       icon: 'assets/icons/soybeans.svg' },
+  { id: 'eggs',        group: 'leucine', target: 50,   name: 'Eggs',                           label: 'Eggs',      fill: 20, slot: 'left-1',  icon: 'assets/icons/eggs.png' },
+  { id: 'steak',       group: 'leucine', target: 11,   name: 'Beef Steaks',                    label: 'Beef Steak', fill: 25, slot: 'right-1', icon: 'assets/icons/steak.png' },
+  { id: 'chicken',     group: 'leucine', target: 7,    name: 'Chicken Breasts',                label: 'Chicken',   fill: 30, slot: 'right-2', icon: 'assets/icons/chicken.png' },
+  { id: 'soybeans',    group: 'leucine', target: 10,   name: 'Cups of Soybeans',               fill: 0,  slot: null,      icon: 'assets/icons/soybeans.svg' },
   // Foods with HMB
-  { id: 'avocado',     group: 'hmb',     target: 3000, name: 'Avocados',                     word: 'avocado',        icon: 'assets/icons/avocado.png' },
-  { id: 'asparagus',   group: 'hmb',     target: 3000, name: 'Servings of Cooked Asparagus', word: 'asparagus',      icon: 'assets/icons/asparagus.png' },
-  { id: 'cauliflower', group: 'hmb',     target: 6500, name: 'Servings of Cooked Cauliflower', word: 'cauliflower',  icon: 'assets/icons/cauliflower.svg' },
-  { id: 'catfish',     group: 'hmb',     target: 750,  name: 'Catfish Fillets',              word: 'catfish',        icon: 'assets/icons/catfish.png' }
+  { id: 'avocado',     group: 'hmb',     target: 3000, name: 'Avocados',                       label: 'Avocado',   fill: 5,  slot: 'left-2',  icon: 'assets/icons/avocado.png' },
+  { id: 'asparagus',   group: 'hmb',     target: 3000, name: 'Servings of Cooked Asparagus',   label: 'Asparagus', fill: 10, slot: 'left-3',  icon: 'assets/icons/asparagus.png' },
+  { id: 'cauliflower', group: 'hmb',     target: 6500, name: 'Servings of Cooked Cauliflower', fill: 0,  slot: null,      icon: 'assets/icons/cauliflower.svg' },
+  { id: 'catfish',     group: 'hmb',     target: 750,  name: 'Catfish Fillets',                label: 'Catfish',   fill: 15, slot: 'right-3', icon: 'assets/icons/catfish.png' }
 ];

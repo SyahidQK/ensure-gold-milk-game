@@ -9,14 +9,14 @@
 <body>
   <div id="stage">
 
-    <!-- ============ SCREEN 1: CHOOSE A FOOD ============ -->
-    <section id="select" class="screen is-active" aria-label="Choose a food">
+    <!-- ============ SCREEN 1: INTRO (right-wall HMB info) ============ -->
+    <section id="select" class="screen is-active" aria-label="Introduction">
       <div class="select-bg" aria-hidden="true"></div>
 
       <header class="select-header">
         <div class="logo-badge"><img src="assets/ensure-gold-logo.png" alt="Ensure Gold"></div>
         <p class="intro"><span class="gold">HMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
-        <h1 class="select-title">Choose a food to start</h1>
+        <h1 class="select-title">Can you fill the glass perfectly?</h1>
       </header>
 
       <div class="need-row">
@@ -43,23 +43,19 @@
         </div>
       </div>
 
-      <button id="startBtn" class="start-btn" disabled>
-        <span class="start-text">Tap a food above</span>
+      <button id="startBtn" class="start-btn">
+        <span class="start-text">Start</span>
       </button>
     </section>
 
     <!-- ============ SCREEN 2: FILL THE GLASS ============ -->
     <section id="game" class="screen" aria-label="Fill the glass">
-      <button id="backBtn" class="back-btn">&#8592; Choose another food</button>
+      <button id="backBtn" class="back-btn">&#8592; Back</button>
 
-      <h2 class="game-title">Tap the <span id="gameFoodWord">food</span> to fill up the glass<br>of Ensure Gold!!</h2>
+      <h2 class="game-title">Tap the food buttons to fill up the glass<br>of Ensure Gold!!</h2>
+      <div class="game-rule">Fill it to exactly <b>100%</b> &mdash; don&rsquo;t overflow!</div>
 
-      <div class="game-left">
-        <button id="tapBtn" class="tap-btn" aria-label="Tap to add food">
-          <img id="tapIcon" src="" alt="">
-        </button>
-        <div class="tap-hint">TAP! TAP! TAP!</div>
-      </div>
+      <div id="gameFoods" class="game-foods"></div>
 
       <div class="glass-panel">
         <div class="glass-wrap">
@@ -96,6 +92,13 @@
             <path d="M44 398 Q46 432 70 434 L230 434 Q254 432 256 398" fill="rgba(200,215,245,.35)" stroke="rgba(255,255,255,.7)" stroke-width="4"/>
             <path d="M38 40 L56 380" stroke="#fff" stroke-opacity=".45" stroke-width="8" stroke-linecap="round"/>
             <ellipse cx="150" cy="18" rx="128" ry="7" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="4"/>
+            <!-- overflow: milk spilling over the rim -->
+            <g id="spill" class="spill">
+              <path d="M10 22 Q150 -14 290 22 Q296 24 292 34 L292 34 Q150 6 8 34 Q4 24 10 22Z" fill="#fffdf7"/>
+              <path class="drip d1" d="M14 26 Q8 26 8 40 L6 150 Q6 166 14 166 Q22 166 22 150 L22 40 Q22 28 14 26Z" fill="#fffdf7"/>
+              <path class="drip d2" d="M286 26 Q292 26 292 40 L294 210 Q294 226 286 226 Q278 226 278 210 L278 40 Q278 28 286 26Z" fill="#fffdf7"/>
+              <path class="drip d3" d="M268 26 Q274 26 274 36 L274 96 Q274 108 268 108 Q262 108 262 96 L262 36 Q262 28 268 26Z" fill="#fffdf7"/>
+            </g>
           </svg>
           <img class="glass-logo" src="assets/ensure-gold-logo.png" alt="Ensure Gold">
           <div id="flyLayer" class="fly-layer"></div>
@@ -107,20 +110,24 @@
         </div>
       </div>
 
-      <div class="game-right">
-        <div class="count-card">
-          <div class="count-label">You have eaten</div>
-          <div id="countNow" class="count-now">0</div>
-          <div class="count-of">of <span id="countTarget">~3,000</span></div>
-          <div id="countUnit" class="count-unit">Avocados</div>
+      <!-- overfilled: shows, then the glass resets for another try -->
+      <div id="overOverlay" class="full-overlay over-overlay" aria-live="polite">
+        <div class="full-card over-card">
+          <div class="full-title">Oops! Too much!</div>
+          <div class="full-msg">You went over 100%. Let&rsquo;s try again!</div>
         </div>
       </div>
 
+      <!-- perfect fill: summary of what was tapped, then the video -->
       <div id="fullOverlay" class="full-overlay" aria-live="polite">
-        <div class="full-card">
+        <div class="full-card summary-card">
           <div class="full-burst" aria-hidden="true"></div>
-          <div class="full-title">Glass full!</div>
-          <div id="fullMsg" class="full-msg"></div>
+          <div class="full-title">Perfect fill!</div>
+          <div class="summary-sub">Here&rsquo;s what it took to fill your glass:</div>
+          <div id="summaryList" class="summary-list"></div>
+          <div class="summary-total">Total <b>100%</b> &middot; <span id="summaryTaps">0</span> taps</div>
+          <div class="summary-note">Getting enough <b>HMB</b> from food alone is very difficult &mdash; <b>Ensure Gold</b> has it in one glass.</div>
+          <button id="summaryNext" class="summary-next">Watch the video &#9654;</button>
         </div>
       </div>
     </section>

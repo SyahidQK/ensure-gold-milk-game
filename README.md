@@ -3,9 +3,11 @@
 Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no internet needed.
 
 ## Flow
-1. **Choose a food to start** – right-wall HMB info + 8 foods (leucine: eggs, steak, chicken, soybeans; HMB: avocado, asparagus, cauliflower, catfish). Tap a food, then **Start**.
-2. **Fill the glass** – tap the food button. Each tap adds a random amount (≈ target ÷ 20, ±40%), so the glass fills in about 20 taps and the counter ends exactly on the target (e.g. 3,000 avocados).
-3. **Glass full!** celebration → **HMB video** → back to start.
+1. **Intro** – right-wall HMB info + 8 foods (leucine: eggs, steak, chicken, soybeans; HMB: avocado, asparagus, cauliflower, catfish). Tap **Start**.
+2. **Fill the glass** – 6 foods around the glass, each adding a fixed amount shown on its button:
+   Avocado +5%, Asparagus +10%, Catfish +15%, Eggs +20%, Beef Steak +25%, Chicken +30%.
+   Players mix any foods to reach **exactly 100%**. Going over overflows the glass ("Oops! Too much!") and the round restarts from 0%. No timer.
+3. **Perfect fill!** – summary of how many times each food was tapped → **HMB video** → back to start.
 
 ## Run at the booth
 Recommended (local server, so the video can seek):
@@ -34,8 +36,9 @@ Chrome only plays sound on its own when launched with `--autoplay-policy=no-user
 
 ## Changing content / tuning
 Everything is in `js/foods.js`:
-- `FOODS` – names, target numbers, icons
-- `GAME_CONFIG` – taps per glass, randomness, idle reset (60 s), celebration length, video path, sound on/off, BGM start point / volume / fade
+- `FOODS` – names, target numbers, icons, `fill` (% per tap), `slot` (position around the glass), `label` (short game name).
+  Keep every `fill` a multiple of the smallest one (currently 5%) so exactly 100% is always reachable.
+- `GAME_CONFIG` – idle reset (60 s), overflow message time, summary time, video path, sound on/off, BGM start point / volume / fade
 
 ## Assets
 - `assets/icons/*.png` – cropped from the PDF game mockup (`tools/crop-assets.js`; needs `npm i jpeg-js pngjs` to re-run)

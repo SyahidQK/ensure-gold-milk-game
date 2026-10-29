@@ -8,30 +8,29 @@
   var stage = $('#stage');
   var screens = { select: $('#select'), game: $('#game'), video: $('#video') };
 
+  var GAME_FOODS = FOODS.filter(function (f) { return f.slot && f.fill > 0; });
+
   var startBtn = $('#startBtn');
-  var tapBtn = $('#tapBtn');
-  var tapIcon = $('#tapIcon');
+  var gameFoods = $('#gameFoods');
   var milk = $('#milk');
   var glassSvg = $('#glassSvg');
   var glassWrap = document.querySelector('.glass-wrap');
+  var glassPanel = document.querySelector('.glass-panel');
   var meterFill = $('#meterFill');
   var meterPct = $('#meterPct');
-  var countNow = $('#countNow');
-  var countTarget = $('#countTarget');
-  var countUnit = $('#countUnit');
-  var gameFoodWord = $('#gameFoodWord');
+  var overOverlay = $('#overOverlay');
   var fullOverlay = $('#fullOverlay');
-  var fullMsg = $('#fullMsg');
+  var summaryList = $('#summaryList');
+  var summaryTaps = $('#summaryTaps');
   var video = $('#hmbVideo');
   var placeholder = $('#videoPlaceholder');
   var vpCount = $('#vpCount');
 
   var state = {
     screen: 'select',
-    food: null,
-    value: 0,       // exact running total
-    shown: 0,       // value currently rendered by the count-up tween
-    done: false,
+    phase: 'play',  // play → over (overfilled, resetting) | win (exactly 100%)
+    total: 0,       // % filled; can pass 100 on the overflowing tap
+    taps: {},       // food id → number of taps this round
     lastTap: 0,
     timers: []
   };
@@ -95,7 +94,9 @@
     o.stop(t + dur + 0.02);
   }
   function sndPop(progress) { tone(420 + progress * 500, 900 + progress * 600, 0.14, 0, 0.22); }
-  function sndSelect() { tone(660, 990, 0.12, 0, 0.18); }
+  function sndFail() {
+    [392, 330, 262].forEach(function (f, i) { tone(f, f * 0.9, 0.3, i * 0.16, 0.25); });
+  }
   function sndWin() {
     [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f * 1.01, 0.35, i * 0.12, 0.25); });
   }
@@ -154,73 +155,66 @@
     bumpIdle();
   }
 
-  /* ---------------- SCREEN 1: build food buttons ---------------- */
+  /* ---------------- SCREEN 1: intro (food facts, not tappable) ---------------- */
   FOODS.forEach(function (f) {
-    var btn = document.createElement('button');
-    btn.className = 'food-btn';
-    btn.dataset.id = f.id;
-    btn.innerHTML =
+    var card = document.createElement('div');
+    card.className = 'food-btn';
+    card.innerHTML =
       '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
       '<div class="food-num">~' + fmt(f.target) + '</div>' +
       '<div class="food-name">' + f.name + '</div>';
-    btn.addEventListener('pointerdown', function () { selectFood(f); });
-    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(btn);
-
-    var pre = new Image();  // preload
-    pre.src = f.icon;
+    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(card);
+    new Image().src = f.icon;  // preload
   });
 
-  function selectFood(f) {
-    state.food = f;
-    document.querySelectorAll('.food-btn').forEach(function (b) {
-      b.classList.toggle('is-selected', b.dataset.id === f.id);
+  startBtn.addEventListener('click', startGame);
+
+  /* ---------------- SCREEN 2: fill the glass to exactly 100% ---------------- */
+  GAME_FOODS.forEach(function (f) {
+    var btn = document.createElement('button');
+    btn.className = 'gfood slot-' + f.slot;
+    btn.setAttribute('aria-label', f.name + ', adds ' + f.fill + '%');
+    btn.innerHTML =
+      '<div class="gfood-circle"><img src="' + f.icon + '" alt=""></div>' +
+      '<div class="gfood-pct">+' + f.fill + '%</div>' +
+      '<div class="gfood-name">' + f.label + '</div>';
+    btn.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      onFoodTap(f, btn);
     });
-    document.querySelectorAll('.food-grid').forEach(function (g) { g.classList.add('has-selection'); });
-    startBtn.disabled = false;
-    startBtn.querySelector('.start-text').textContent = 'Start';
-    sndSelect();
-  }
-
-  function resetSelect() {
-    state.food = null;
-    document.querySelectorAll('.food-btn').forEach(function (b) { b.classList.remove('is-selected'); });
-    document.querySelectorAll('.food-grid').forEach(function (g) { g.classList.remove('has-selection'); });
-    startBtn.disabled = true;
-    startBtn.querySelector('.start-text').textContent = 'Tap a food above';
-  }
-
-  startBtn.addEventListener('click', function () {
-    if (!state.food) return;
-    startGame(state.food);
+    btn.addEventListener('animationend', function (e) {
+      if (e.animationName === 'hit') btn.classList.remove('is-hit');
+    });
+    gameFoods.appendChild(btn);
   });
 
-  /* ---------------- SCREEN 2: fill the glass ---------------- */
-  function startGame(f) {
+  function startGame() {
     clearTimers();
-    state.food = f;
-    state.value = 0;
-    state.shown = 0;
-    state.done = false;
-    tapIcon.src = f.icon;
-    gameFoodWord.textContent = f.word;
-    countTarget.textContent = '~' + fmt(f.target);
-    countUnit.textContent = f.name;
-    countNow.textContent = '0';
-    tapBtn.disabled = false;
-    fullOverlay.classList.remove('is-shown');
-    document.querySelectorAll('.confetti').forEach(function (c) { c.remove(); });
-    setLevel(0, true);
+    resetRound();
     show('game');
   }
 
-  function setLevel(p, instant) {
+  function resetRound() {
+    state.phase = 'play';
+    state.total = 0;
+    state.taps = {};
+    gameFoods.classList.remove('is-locked');
+    glassPanel.classList.remove('is-over', 'is-perfect');
+    glassSvg.classList.remove('is-overflow');
+    overOverlay.classList.remove('is-shown');
+    fullOverlay.classList.remove('is-shown');
+    document.querySelectorAll('.confetti, .fly-food').forEach(function (c) { c.remove(); });
+    setLevel(0, true);
+  }
+
+  function setLevel(pct, instant) {
+    var p = Math.min(pct, 100) / 100;
     // milk group: y=420 → empty (below the glass floor), y=6 → brim
     var y = 420 - p * 414;
     if (instant) { milk.style.transition = 'none'; meterFill.style.transition = 'none'; }
-    milk.setAttribute('transform', 'translate(0 ' + y.toFixed(1) + ')');
     milk.style.transform = 'translate(0px, ' + y.toFixed(1) + 'px)';
     meterFill.style.height = (p * 100) + '%';
-    meterPct.textContent = Math.floor(p * 100) + '%';
+    meterPct.textContent = pct + '%';
     if (instant) {
       void milk.getBoundingClientRect();
       milk.style.transition = '';
@@ -228,63 +222,35 @@
     }
   }
 
-  var tween = null;
-  function countTo(target) {
-    var from = state.shown;
-    var t0 = performance.now();
-    var dur = 350;
-    cancelAnimationFrame(tween);
-    (function step(now) {
-      var k = Math.min(1, (now - t0) / dur);
-      var e = 1 - Math.pow(1 - k, 3);
-      state.shown = from + (target - from) * e;
-      countNow.textContent = fmt(Math.floor(state.shown));
-      if (k < 1) tween = requestAnimationFrame(step);
-      else { state.shown = target; countNow.textContent = fmt(target >= state.food.target ? state.food.target : Math.floor(target)); }
-    })(t0);
-    countNow.classList.remove('bump');
-    void countNow.offsetWidth;
-    countNow.classList.add('bump');
-  }
-
-  function onTap(e) {
-    e.preventDefault();
-    if (state.screen !== 'game' || state.done || !state.food) return;
+  function onFoodTap(f, btn) {
+    if (state.screen !== 'game' || state.phase !== 'play') return;
     var now = performance.now();
-    if (now - state.lastTap < 60) return;
+    if (now - state.lastTap < 80) return;  // ignore double-fires from one touch
     state.lastTap = now;
     bumpIdle();
 
-    var f = state.food;
-    var base = f.target / CFG.tapsToFill;
-    var inc = base * (CFG.tapRandomMin + Math.random() * (CFG.tapRandomMax - CFG.tapRandomMin));
-    var before = state.value;
-    state.value = Math.min(f.target, state.value + inc);
-    var p = state.value / f.target;
-
-    setLevel(p);
-    countTo(state.value);
-    flyFood(Math.round(state.value) - Math.round(before));
+    state.total += f.fill;
+    state.taps[f.id] = (state.taps[f.id] || 0) + 1;
+    setLevel(state.total);
     slosh();
-    sndPop(p);
+    sndPop(Math.min(state.total, 100) / 100);
+    if (btn) {
+      btn.classList.remove('is-hit');
+      void btn.offsetWidth;
+      btn.classList.add('is-hit');
+      flyFood(f, btn);
+    }
 
-    tapBtn.classList.remove('is-hit');
-    void tapBtn.offsetWidth;
-    tapBtn.classList.add('is-hit');
-
-    if (state.value >= f.target) complete();
+    if (state.total === 100) win();
+    else if (state.total > 100) overflow();
   }
-  tapBtn.addEventListener('pointerdown', onTap);
-  tapBtn.addEventListener('animationend', function (e) {
-    if (e.animationName === 'hit') tapBtn.classList.remove('is-hit');
-  });
 
-  function flyFood(added) {
-    var from = stageCenter(tapBtn);
+  function flyFood(f, btn) {
+    var from = stageCenter(btn.querySelector('.gfood-circle'));
     var to = stageCenter(glassWrap);
     var el = document.createElement('div');
     el.className = 'fly-food';
-    el.innerHTML = '<img src="' + state.food.icon + '" alt="">';
+    el.innerHTML = '<img src="' + f.icon + '" alt="">';
     el.style.left = (from.x - 55) + 'px';
     el.style.top = (from.y - 55) + 'px';
     screens.game.appendChild(el);
@@ -293,18 +259,16 @@
     var dy = (to.y - to.h * 0.42) - from.y;
     var anim = el.animate([
       { transform: 'translate(0,0) scale(1) rotate(0deg)', opacity: 1 },
-      { transform: 'translate(' + dx * 0.5 + 'px,' + (dy - 220) + 'px) scale(.85) rotate(160deg)', opacity: 1, offset: 0.5 },
+      { transform: 'translate(' + dx * 0.5 + 'px,' + (dy - 160) + 'px) scale(.85) rotate(160deg)', opacity: 1, offset: 0.5 },
       { transform: 'translate(' + dx + 'px,' + (dy + 60) + 'px) scale(.35) rotate(320deg)', opacity: 0 }
     ], { duration: 600, easing: 'cubic-bezier(.3,.6,.6,1)' });
     anim.onfinish = function () { el.remove(); };
 
-    if (added > 0) {
-      var plus = document.createElement('div');
-      plus.className = 'plus';
-      plus.textContent = '+' + fmt(added);
-      glassWrap.querySelector('.fly-layer').appendChild(plus);
-      setTimeout(function () { plus.remove(); }, 950);
-    }
+    var plus = document.createElement('div');
+    plus.className = 'plus';
+    plus.textContent = '+' + f.fill + '%';
+    glassWrap.querySelector('.fly-layer').appendChild(plus);
+    setTimeout(function () { plus.remove(); }, 950);
   }
 
   var sloshTimer = null;
@@ -314,20 +278,46 @@
     sloshTimer = setTimeout(function () { glassSvg.classList.remove('is-sloshing'); }, 500);
   }
 
-  function complete() {
-    state.done = true;
-    tapBtn.disabled = true;
-    setLevel(1);
-    var f = state.food;
-    fullMsg.innerHTML = 'You need <b>~' + fmt(f.target) + ' ' + f.name + '</b><br>to match just <b>1 glass of Ensure Gold!</b>';
-    // let the full glass be seen for a moment before the celebration card covers it
-    later(function () {
-      fullOverlay.classList.add('is-shown');
-      confetti();
-      sndWin();
-    }, 1200);
-    later(playVideo, 1200 + CFG.celebrateMs);
+  function overflow() {
+    state.phase = 'over';
+    gameFoods.classList.add('is-locked');
+    glassPanel.classList.add('is-over');
+    glassSvg.classList.add('is-overflow');
+    glassWrap.classList.remove('is-shaking');
+    void glassWrap.offsetWidth;
+    glassWrap.classList.add('is-shaking');
+    later(sndFail, 250);
+    later(function () { overOverlay.classList.add('is-shown'); }, 900);
+    later(resetRound, 900 + CFG.overflowMs);
   }
+
+  function win() {
+    state.phase = 'win';
+    gameFoods.classList.add('is-locked');
+    glassPanel.classList.add('is-perfect');
+    sndWin();
+    later(showSummary, CFG.perfectMs);
+  }
+
+  function showSummary() {
+    var totalTaps = 0;
+    summaryList.innerHTML = GAME_FOODS.map(function (f) {
+      var n = state.taps[f.id] || 0;
+      totalTaps += n;
+      return '<div class="summary-row' + (n ? '' : ' is-zero') + '">' +
+        '<img src="' + f.icon + '" alt="">' +
+        '<div><div class="s-count">&times;' + n + '<span class="s-pct">' + (n * f.fill) + '%</span></div>' +
+        '<div class="s-name">' + f.label + '</div></div></div>';
+    }).join('');
+    summaryTaps.textContent = totalTaps;
+    fullOverlay.classList.add('is-shown');
+    confetti();
+    later(playVideo, CFG.summaryMs);
+  }
+
+  $('#summaryNext').addEventListener('click', function () {
+    if (state.screen === 'game' && state.phase === 'win') playVideo();
+  });
 
   function confetti() {
     var colors = ['#f3d68a', '#d4a84b', '#ffffff', '#2f8ff0', '#e2672f'];
@@ -395,23 +385,19 @@
   /* ---------------- reset / idle ---------------- */
   function goHome() {
     clearTimers();
-    cancelAnimationFrame(tween);
     video.pause();
     video.removeAttribute('src');
     video.load();
-    fullOverlay.classList.remove('is-shown');
-    document.querySelectorAll('.confetti, .fly-food').forEach(function (c) { c.remove(); });
-    resetSelect();
+    resetRound();
     show('select');
   }
 
   var idleTimer = null;
   function bumpIdle() {
     clearTimeout(idleTimer);
-    if (state.screen === 'video') return;  // video screen returns home on its own
+    if (state.screen !== 'game') return;  // intro waits; video screen returns home on its own
     idleTimer = setTimeout(function () {
-      if (state.screen === 'game' && !state.done) goHome();
-      else if (state.screen === 'select' && state.food) resetSelect();
+      if (state.screen === 'game' && state.phase === 'play') goHome();
     }, CFG.idleResetMs);
   }
   document.addEventListener('pointerdown', bumpIdle, true);
@@ -436,14 +422,19 @@
   // preload remaining art
   ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png'].forEach(function (src) { new Image().src = src; });
 
-  // debug helper for testing in a browser console: GAME.go('game'|'video')
+  // debug helper for testing in a browser console: GAME.go('game'|'video'|'home'), GAME.tap('avocado')
   window.GAME = {
     state: state,
     bgm: bgm,
     go: function (name) {
-      if (name === 'game') startGame(state.food || FOODS[0]);
+      if (name === 'game') startGame();
       else if (name === 'video') playVideo();
       else goHome();
+    },
+    tap: function (id) {
+      var f = GAME_FOODS.filter(function (x) { return x.id === id; })[0];
+      state.lastTap = -1e9;
+      if (f) onFoodTap(f);
     }
   };
 
