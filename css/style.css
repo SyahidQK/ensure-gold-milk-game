@@ -90,7 +90,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   position: absolute;
   left: 0;
   right: 0;
-  top: 170px;
+  top: 150px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -126,7 +126,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .start-btn {
   position: absolute;
   left: 50%;
-  bottom: 34px;
+  bottom: 120px;
   transform: translateX(-50%);
   min-width: 560px;
   height: 116px;
