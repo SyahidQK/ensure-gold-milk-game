@@ -28,10 +28,14 @@ Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-right corner** for 
 Drop the file at `assets/video/hmb.mp4` (H.264 MP4, 1920×1080). Nothing else to change.
 Until it exists, a "HMB Video – Coming soon" screen shows for 6 seconds instead.
 
+## Background music
+`assets/audio/bgm.mp3` plays from 0:09 and loops back to 0:09 when it ends. It fades out while the video screen is showing and fades back in afterwards.
+Chrome only plays sound on its own when launched with `--autoplay-policy=no-user-gesture-required` (included in the kiosk command above); otherwise the music starts on the first touch.
+
 ## Changing content / tuning
 Everything is in `js/foods.js`:
 - `FOODS` – names, target numbers, icons
-- `GAME_CONFIG` – taps per glass, randomness, idle reset (60 s), celebration length, video path, sound on/off
+- `GAME_CONFIG` – taps per glass, randomness, idle reset (60 s), celebration length, video path, sound on/off, BGM start point / volume / fade
 
 ## Assets
 - `assets/icons/*.png` – cropped from the PDF game mockup (`tools/crop-assets.js`; needs `npm i jpeg-js pngjs` to re-run)

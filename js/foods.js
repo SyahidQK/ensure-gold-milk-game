@@ -10,7 +10,12 @@ window.GAME_CONFIG = {
   celebrateMs: 3500,       // how long the "Glass full!" card shows before the video
   videoSrc: 'assets/video/hmb.mp4',
   placeholderMs: 6000,     // shown while the client video is not yet in place
-  sound: true
+  sound: true,             // tap / win sound effects
+  bgmSrc: 'assets/audio/bgm.mp3',
+  bgmStartAt: 9,           // seconds into the track where the BGM starts (and each loop restarts)
+  bgmVolume: 0.6,          // 0–1
+  bgmFadeMs: 800           // fade when muting for the video / unmuting after
+
 };
 
 window.FOODS = [

@@ -100,10 +100,57 @@
     [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f * 1.01, 0.35, i * 0.12, 0.25); });
   }
 
+  /* ---------------- background music ---------------- */
+  var bgm = new Audio(CFG.bgmSrc);
+  bgm.preload = 'auto';
+  bgm.volume = CFG.bgmVolume;
+  var bgmStarted = false;
+  var bgmTargetVol = CFG.bgmVolume;
+  var bgmFade = null;
+
+  // loop back to bgmStartAt rather than 0 (native `loop` always restarts at 0)
+  bgm.addEventListener('ended', function () {
+    bgm.currentTime = CFG.bgmStartAt;
+    bgm.play().catch(function () {});
+  });
+
+  function startBgm() {
+    if (bgmStarted) return;
+    bgm.currentTime = CFG.bgmStartAt;
+    var p = bgm.play();
+    if (p && p.then) {
+      // blocked until the first touch unless Chrome runs with --autoplay-policy=no-user-gesture-required
+      p.then(function () { bgmStarted = true; }).catch(function () {});
+    } else {
+      bgmStarted = true;
+    }
+  }
+  startBgm();
+  document.addEventListener('pointerdown', startBgm, true);
+
+  function fadeBgm(to) {
+    bgmTargetVol = to;
+    clearInterval(bgmFade);
+    if (to > 0) bgm.muted = false;
+    var from = bgm.volume;
+    var t0 = performance.now();
+    bgmFade = setInterval(function () {
+      var k = Math.min(1, (performance.now() - t0) / CFG.bgmFadeMs);
+      bgm.volume = from + (to - from) * k;
+      if (k >= 1) {
+        clearInterval(bgmFade);
+        if (to === 0) bgm.muted = true;
+      }
+    }, 30);
+  }
+  function muteBgm() { if (bgmTargetVol !== 0) fadeBgm(0); }
+  function unmuteBgm() { if (bgmTargetVol !== CFG.bgmVolume) fadeBgm(CFG.bgmVolume); }
+
   /* ---------------- screens ---------------- */
   function show(name) {
     Object.keys(screens).forEach(function (k) { screens[k].classList.toggle('is-active', k === name); });
     state.screen = name;
+    if (name === 'video') muteBgm(); else unmuteBgm();
     bumpIdle();
   }
 
@@ -392,6 +439,7 @@
   // debug helper for testing in a browser console: GAME.go('game'|'video')
   window.GAME = {
     state: state,
+    bgm: bgm,
     go: function (name) {
       if (name === 'game') startGame(state.food || FOODS[0]);
       else if (name === 'video') playVideo();
