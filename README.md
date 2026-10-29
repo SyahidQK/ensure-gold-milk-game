@@ -1,9 +1,9 @@
-# Ensure Gold – Fill Up the Glass (HMB Booth touch-TV game)
+# Fill It Gold – Ensure Gold HMB booth touch-TV game
 
 Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no internet needed.
 
 ## Flow
-1. **Main page** – Ensure Gold logo, the game name "Ensure Gold Fill Up Game", the line "HMB is found in small amounts
+1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "HMB is found in small amounts
    in some foods…", and **Press to start**. The game only starts from that button.
 2. **Fill the glass** – 6 foods around the glass. Each tap adds a hidden amount:
    Avocado 1%, Asparagus 2%, Catfish 3%, Eggs 4%, Beef Steak 5%, Chicken 6%.

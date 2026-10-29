@@ -90,7 +90,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   position: absolute;
   left: 0;
   right: 0;
-  top: 125px;
+  top: 170px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -106,7 +106,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .home-logo img { display: block; height: 170px; }
 .home-title {
   margin-top: 44px;
-  font-size: 128px;
+  font-size: 160px;
   font-weight: 700;
   line-height: 1.02;
   color: var(--cream);
