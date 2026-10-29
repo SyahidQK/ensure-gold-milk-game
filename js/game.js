@@ -358,15 +358,28 @@
     new Image().src = f.icon;  // preload
   });
 
+  var infoCount = $('#infoCount');
   function showInfo() {
     clearTimers();
     video.pause();
     video.removeAttribute('src');
     video.load();
     show('info');
-    later(goHome, CFG.infoMs);
+    // visible countdown on the button so the page never looks stuck
+    var left = Math.round(CFG.infoMs / 1000);
+    (function tick() {
+      if (left <= 0) { goHome(); return; }
+      infoCount.textContent = ' · ' + left;
+      left--;
+      later(tick, 1000);
+    })();
   }
 
+  // tapping anywhere on the last page goes straight back to the game
+  screens.info.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    if (state.screen === 'info') goHome();
+  });
   playAgainBtn.addEventListener('click', goHome);
 
   /* ---------------- reset / idle ---------------- */

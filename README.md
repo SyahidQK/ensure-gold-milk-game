@@ -9,7 +9,7 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
 2. **Glass full!** – summary of how many times each food was tapped (auto-continues after 9 s, or tap "Watch the video").
 3. **HMB video** (background music muted).
 4. **Did you know?** – right-wall HMB info + 8 foods (leucine: eggs, steak, chicken, soybeans; HMB: avocado, asparagus, cauliflower, catfish).
-   **Play again** or wait 30 s → back to the game with an empty glass.
+   Tap anywhere or **Play again** (or wait 10 s, counted down on the button) → back to the game with an empty glass.
 
 A half-filled glass left untouched for 60 s empties itself for the next player.
 

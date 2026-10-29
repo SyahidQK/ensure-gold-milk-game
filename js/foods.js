@@ -8,7 +8,7 @@ window.GAME_CONFIG = {
   summaryMs: 9000,         // summary auto-continues to the video after this long
   videoSrc: 'assets/video/hmb.mp4',
   placeholderMs: 6000,     // shown while the client video is not yet in place
-  infoMs: 30000,           // HMB info page (last page) returns to the game after this long
+  infoMs: 10000,           // HMB info page (last page) returns to the game after this long; a tap returns at once
   sound: true,             // tap / win sound effects
   bgmSrc: 'assets/audio/bgm.mp3',
   bgmStartAt: 9,           // seconds into the track where the BGM starts (and each loop restarts)
