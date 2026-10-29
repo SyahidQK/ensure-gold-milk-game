@@ -68,7 +68,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .gold { color: var(--gold); }
 
 /* =================================================================
-   MAIN PAGE – HMB INFO (right-wall panel) + START
+   MAIN PAGE – logo, game name, HMB line + START
    ================================================================= */
 #info {
   background:
@@ -86,191 +86,42 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   mask-image: radial-gradient(ellipse at 50% 50%, transparent 30%, #000 85%);
 }
 
-/* the white card, as on the booth wall */
-.wall {
+.home {
   position: absolute;
-  left: 60px;
-  right: 60px;
-  top: 34px;
-  height: 846px;
-  padding: 30px 50px 34px;
-  border-radius: 40px;
-  background: linear-gradient(180deg, #ffffff, #fbf8f0);
-  border: 6px solid var(--gold);
-  box-shadow: 0 0 0 4px rgba(243,214,138,.25), 0 20px 50px rgba(0,0,0,.45);
-  color: var(--navy-800);
+  left: 0;
+  right: 0;
+  top: 125px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
-.wall-logo {
-  position: absolute;
-  left: 34px;
-  top: 26px;
-  height: 92px;
-}
-.wall-intro {
-  width: 1240px;
-  margin: 0 auto;
-  font-size: 44px;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--navy-800);
-}
-.wall-intro .gold { color: #c9962f; }
-.wall-need {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 6px 40px;
-  border: 4px solid var(--gold);
-  border-radius: 20px;
-  font-size: 48px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--navy-800);
-}
-
-.need-row {
-  margin-top: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-}
-.pill {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  height: 84px;
-  padding: 0 28px 0 10px;
-  border-radius: 42px;
-  font-size: 23px;
-  font-weight: 600;
-  line-height: 1.15;
-  text-align: left;
-  text-transform: uppercase;
-  max-width: 440px;
-  color: var(--white);
-  box-shadow: 0 6px 14px rgba(10,26,82,.25);
-}
-.pill b { color: var(--gold-light); }
-.pill-navy { background: #0d1b4d; }
-.pill-blue { background: var(--blue); }
-.pill-blue b { color: #ffe9a8; }
-.pill-gold { background: var(--gold); color: var(--navy-800); }
-.pill-gold b { color: var(--navy-800); }
-.pill-ico {
-  flex: 0 0 62px;
-  height: 62px;
-  border-radius: 50%;
+.home-logo {
+  padding: 22px 50px;
+  border-radius: 36px;
   background: var(--white);
-  color: var(--navy-800);
-  display: grid;
-  place-items: center;
+  border: 6px solid var(--gold);
+  box-shadow: 0 0 0 5px rgba(243,214,138,.25), 0 18px 44px rgba(0,0,0,.45);
 }
-.pill-ico svg { width: 38px; height: 38px; }
-.pill-ico-hex { font-size: 16px; font-weight: 700; color: var(--navy-800); border: 3px solid var(--navy-800); }
-.pill-arrow { color: var(--gold); font-size: 26px; }
-
-.wall-cols {
-  margin-top: 26px;
-  display: flex;
-  align-items: stretch;
-  gap: 50px;
-}
-.wall-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.wall-head {
-  padding: 10px 50px;
-  border-radius: 40px;
-  background: var(--navy-900);
-  border: 4px solid var(--gold);
-  color: var(--white);
-  font-size: 30px;
+.home-logo img { display: block; height: 170px; }
+.home-title {
+  margin-top: 44px;
+  font-size: 128px;
   font-weight: 700;
-  text-transform: uppercase;
+  line-height: 1.02;
+  color: var(--cream);
+  text-shadow: 0 7px 0 var(--gold-dark), 0 14px 34px rgba(0,0,0,.5);
   letter-spacing: 1px;
 }
-.wall-arrow {
-  width: 0;
-  height: 0;
-  margin: 10px 0 8px;
-  border-left: 26px solid transparent;
-  border-right: 26px solid transparent;
-  border-top: 30px solid var(--gold);
-  position: relative;
+.home-intro {
+  margin-top: 40px;
+  width: 1300px;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #d8e4ff;
 }
-.wall-arrow::before {
-  content: '';
-  position: absolute;
-  left: -12px;
-  bottom: 28px;
-  width: 24px;
-  height: 18px;
-  background: var(--gold);
-}
-.food-grid {
-  flex: 1;
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  padding: 22px 10px;
-  border: 4px solid var(--gold);
-  border-radius: 26px;
-  background: #fff;
-}
-.wall-or {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--navy-800);
-}
-.wall-or::before, .wall-or::after {
-  content: '';
-  width: 3px;
-  height: 64px;
-  background: var(--navy-800);
-  border-radius: 2px;
-}
-.food-btn {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 4px;
-}
-.food-icon {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 5px solid var(--gold);
-  background: var(--navy-700);
-  box-shadow: 0 6px 14px rgba(10,26,82,.3);
-  overflow: hidden;
-}
-.food-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.food-num {
-  margin-top: 12px;
-  font-size: 52px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--navy-800);
-}
-.food-name {
-  margin-top: 4px;
-  font-size: 23px;
-  font-weight: 600;
-  line-height: 1.1;
-  color: var(--orange);
-}
+.home-intro .gold { font-weight: 700; color: var(--gold-light); }
 
 .start-btn {
   position: absolute;

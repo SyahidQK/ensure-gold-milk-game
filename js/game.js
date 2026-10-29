@@ -35,7 +35,6 @@
     timers: []
   };
 
-  var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
 
   /* ---------------- stage scaling ---------------- */
   function fit() {
@@ -346,18 +345,7 @@
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
   video.addEventListener('ended', goHome);
 
-  /* ---------------- MAIN PAGE: HMB info (right-wall panel) + start ---------------- */
-  ['leucine', 'hmb'].forEach(function (group) {
-    var list = document.querySelector('.food-grid[data-group="' + group + '"]');
-    list.innerHTML = FOODS.filter(function (f) { return f.group === group; }).map(function (f) {
-      new Image().src = f.icon;  // preload
-      return '<div class="food-btn">' +
-        '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
-        '<div class="food-num">~' + fmt(f.target) + '</div>' +
-        '<div class="food-name">' + f.name + '</div></div>';
-    }).join('<div class="wall-or">OR</div>');
-  });
-
+  /* ---------------- MAIN PAGE: logo, game name, HMB line + start ---------------- */
   startBtn.addEventListener('click', startGame);
 
   /* ---------------- reset / idle ---------------- */
