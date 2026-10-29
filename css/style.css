@@ -70,7 +70,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* =================================================================
    SCREEN 1 – CHOOSE A FOOD
    ================================================================= */
-#select {
+#info {
   background:
     radial-gradient(1200px 700px at 50% 0%, #17398f 0%, transparent 70%),
     radial-gradient(900px 600px at 100% 100%, #10307d 0%, transparent 70%),
@@ -309,20 +309,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: url('../assets/bg-farm.svg') center / cover no-repeat, #8fd0f6;
 }
 
-.back-btn {
-  position: absolute;
-  bottom: 30px;
-  left: 40px;
-  z-index: 5;
-  padding: 14px 28px;
-  border-radius: 40px;
-  background: rgba(10,26,82,.85);
-  border: 3px solid var(--gold);
-  font-size: 26px;
-  font-weight: 600;
-}
-.back-btn:active { transform: scale(.96); }
-
 .game-title {
   position: absolute;
   top: 22px;
@@ -443,8 +429,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   font-weight: 700;
   transition: color .3s ease;
 }
-.glass-panel.is-over .meter-pct { color: #ff6b5a; }
-.glass-panel.is-over .meter-fill { background: linear-gradient(90deg, #c0392b, #ff8a7a 45%, #e74c3c); box-shadow: 0 -4px 14px rgba(255,120,100,.9); }
 .glass-panel.is-perfect { box-shadow: 0 0 0 10px rgba(243,214,138,.5), 0 0 90px rgba(243,214,138,.9); }
 
 .game-rule {
@@ -461,22 +445,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   white-space: nowrap;
 }
 .game-rule b { color: var(--gold-light); }
-
-/* overflow: milk spilling over the rim */
-.spill { opacity: 0; transition: opacity .2s ease; }
-.glass-svg.is-overflow .spill { opacity: 1; }
-.glass-svg.is-overflow .drip { animation: drip 1.2s ease-in forwards; transform-box: fill-box; transform-origin: top; }
-.glass-svg.is-overflow .d2 { animation-delay: .15s; }
-.glass-svg.is-overflow .d3 { animation-delay: .3s; }
-@keyframes drip {
-  from { transform: scaleY(.1); }
-  to { transform: scaleY(1); }
-}
-.glass-wrap.is-shaking { animation: shake .5s ease; }
-@keyframes shake {
-  20%, 60% { transform: translateX(-12px) rotate(-2deg); }
-  40%, 80% { transform: translateX(12px) rotate(2deg); }
-}
 
 /* six food buttons around the glass (positions follow the mockup) */
 .gfood {
@@ -504,27 +472,19 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   40% { transform: scale(.88); }
   100% { transform: scale(1); }
 }
-.gfood-pct {
-  margin-top: -26px;
+.gfood-name {
+  margin-top: -24px;
   z-index: 1;
-  padding: 4px 22px;
+  padding: 4px 20px;
   border-radius: 30px;
   background: linear-gradient(180deg, #f6dc8f, var(--gold) 60%, var(--gold-dark));
   border: 3px solid #fff2c4;
   color: var(--navy-800);
-  font-size: 34px;
+  font-size: 26px;
   font-weight: 700;
-  line-height: 1.1;
-  box-shadow: 0 4px 10px rgba(0,0,0,.3);
-}
-.gfood-name {
-  margin-top: 6px;
-  padding: 2px 14px;
-  border-radius: 20px;
-  background: rgba(10,26,82,.8);
-  font-size: 22px;
-  font-weight: 600;
+  line-height: 1.15;
   white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
 }
 .gfood.slot-left-1  { left: 145px;  top: 222px; }
 .gfood.slot-left-2  { left: 329px;  top: 470px; }
@@ -568,8 +528,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .full-msg { margin-top: 26px; font-size: 46px; font-weight: 500; line-height: 1.3; }
 .full-msg b { color: var(--gold-light); }
-.over-card { width: 900px; border-color: #ff8a7a; box-shadow: 0 0 80px rgba(255,120,100,.6); }
-.over-card .full-title { font-size: 100px; color: #ffd2c8; text-shadow: 0 6px 0 #a33a2c; }
 
 .summary-card { width: 1180px; padding: 46px 60px 44px; }
 .summary-card .full-title { font-size: 100px; }

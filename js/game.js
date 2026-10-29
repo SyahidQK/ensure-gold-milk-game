@@ -6,11 +6,12 @@
 
   var $ = function (sel) { return document.querySelector(sel); };
   var stage = $('#stage');
-  var screens = { select: $('#select'), game: $('#game'), video: $('#video') };
+  // flow: game → (glass full) summary → video → info → game
+  var screens = { game: $('#game'), video: $('#video'), info: $('#info') };
 
   var GAME_FOODS = FOODS.filter(function (f) { return f.slot && f.fill > 0; });
 
-  var startBtn = $('#startBtn');
+  var playAgainBtn = $('#playAgainBtn');
   var gameFoods = $('#gameFoods');
   var milk = $('#milk');
   var glassSvg = $('#glassSvg');
@@ -18,7 +19,6 @@
   var glassPanel = document.querySelector('.glass-panel');
   var meterFill = $('#meterFill');
   var meterPct = $('#meterPct');
-  var overOverlay = $('#overOverlay');
   var fullOverlay = $('#fullOverlay');
   var summaryList = $('#summaryList');
   var summaryTaps = $('#summaryTaps');
@@ -27,9 +27,9 @@
   var vpCount = $('#vpCount');
 
   var state = {
-    screen: 'select',
-    phase: 'play',  // play → over (overfilled, resetting) | win (exactly 100%)
-    total: 0,       // % filled; can pass 100 on the overflowing tap
+    screen: 'game',
+    phase: 'play',  // play → full (glass reached 100%)
+    total: 0,       // % filled, capped at 100
     taps: {},       // food id → number of taps this round
     lastTap: 0,
     timers: []
@@ -94,9 +94,6 @@
     o.stop(t + dur + 0.02);
   }
   function sndPop(progress) { tone(420 + progress * 500, 900 + progress * 600, 0.14, 0, 0.22); }
-  function sndFail() {
-    [392, 330, 262].forEach(function (f, i) { tone(f, f * 0.9, 0.3, i * 0.16, 0.25); });
-  }
   function sndWin() {
     [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f * 1.01, 0.35, i * 0.12, 0.25); });
   }
@@ -155,28 +152,13 @@
     bumpIdle();
   }
 
-  /* ---------------- SCREEN 1: intro (food facts, not tappable) ---------------- */
-  FOODS.forEach(function (f) {
-    var card = document.createElement('div');
-    card.className = 'food-btn';
-    card.innerHTML =
-      '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
-      '<div class="food-num">~' + fmt(f.target) + '</div>' +
-      '<div class="food-name">' + f.name + '</div>';
-    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(card);
-    new Image().src = f.icon;  // preload
-  });
-
-  startBtn.addEventListener('click', startGame);
-
-  /* ---------------- SCREEN 2: fill the glass to exactly 100% ---------------- */
+  /* ---------------- GAME: tap foods until the glass is full ---------------- */
   GAME_FOODS.forEach(function (f) {
     var btn = document.createElement('button');
     btn.className = 'gfood slot-' + f.slot;
-    btn.setAttribute('aria-label', f.name + ', adds ' + f.fill + '%');
+    btn.setAttribute('aria-label', f.name);
     btn.innerHTML =
       '<div class="gfood-circle"><img src="' + f.icon + '" alt=""></div>' +
-      '<div class="gfood-pct">+' + f.fill + '%</div>' +
       '<div class="gfood-name">' + f.label + '</div>';
     btn.addEventListener('pointerdown', function (e) {
       e.preventDefault();
@@ -199,9 +181,7 @@
     state.total = 0;
     state.taps = {};
     gameFoods.classList.remove('is-locked');
-    glassPanel.classList.remove('is-over', 'is-perfect');
-    glassSvg.classList.remove('is-overflow');
-    overOverlay.classList.remove('is-shown');
+    glassPanel.classList.remove('is-perfect');
     fullOverlay.classList.remove('is-shown');
     document.querySelectorAll('.confetti, .fly-food').forEach(function (c) { c.remove(); });
     setLevel(0, true);
@@ -229,11 +209,11 @@
     state.lastTap = now;
     bumpIdle();
 
-    state.total += f.fill;
+    state.total = Math.min(100, state.total + f.fill);
     state.taps[f.id] = (state.taps[f.id] || 0) + 1;
     setLevel(state.total);
     slosh();
-    sndPop(Math.min(state.total, 100) / 100);
+    sndPop(state.total / 100);
     if (btn) {
       btn.classList.remove('is-hit');
       void btn.offsetWidth;
@@ -241,8 +221,7 @@
       flyFood(f, btn);
     }
 
-    if (state.total === 100) win();
-    else if (state.total > 100) overflow();
+    if (state.total >= 100) glassFull();
   }
 
   function flyFood(f, btn) {
@@ -266,7 +245,7 @@
 
     var plus = document.createElement('div');
     plus.className = 'plus';
-    plus.textContent = '+' + f.fill + '%';
+    plus.textContent = '+1 ' + f.label;
     glassWrap.querySelector('.fly-layer').appendChild(plus);
     setTimeout(function () { plus.remove(); }, 950);
   }
@@ -278,25 +257,12 @@
     sloshTimer = setTimeout(function () { glassSvg.classList.remove('is-sloshing'); }, 500);
   }
 
-  function overflow() {
-    state.phase = 'over';
-    gameFoods.classList.add('is-locked');
-    glassPanel.classList.add('is-over');
-    glassSvg.classList.add('is-overflow');
-    glassWrap.classList.remove('is-shaking');
-    void glassWrap.offsetWidth;
-    glassWrap.classList.add('is-shaking');
-    later(sndFail, 250);
-    later(function () { overOverlay.classList.add('is-shown'); }, 900);
-    later(resetRound, 900 + CFG.overflowMs);
-  }
-
-  function win() {
-    state.phase = 'win';
+  function glassFull() {
+    state.phase = 'full';
     gameFoods.classList.add('is-locked');
     glassPanel.classList.add('is-perfect');
     sndWin();
-    later(showSummary, CFG.perfectMs);
+    later(showSummary, CFG.fullMs);
   }
 
   function showSummary() {
@@ -306,7 +272,7 @@
       totalTaps += n;
       return '<div class="summary-row' + (n ? '' : ' is-zero') + '">' +
         '<img src="' + f.icon + '" alt="">' +
-        '<div><div class="s-count">&times;' + n + '<span class="s-pct">' + (n * f.fill) + '%</span></div>' +
+        '<div><div class="s-count">&times;' + n + '</div>' +
         '<div class="s-name">' + f.label + '</div></div></div>';
     }).join('');
     summaryTaps.textContent = totalTaps;
@@ -316,7 +282,7 @@
   }
 
   $('#summaryNext').addEventListener('click', function () {
-    if (state.screen === 'game' && state.phase === 'win') playVideo();
+    if (state.screen === 'game' && state.phase === 'full') playVideo();
   });
 
   function confetti() {
@@ -332,9 +298,7 @@
     }
   }
 
-  $('#backBtn').addEventListener('click', goHome);
-
-  /* ---------------- SCREEN 3: HMB video ---------------- */
+  /* ---------------- HMB video ---------------- */
   var videoWatch = null;
   function playVideo() {
     clearTimers();
@@ -371,7 +335,7 @@
     var left = Math.round(CFG.placeholderMs / 1000);
     vpCount.textContent = left;
     (function tick() {
-      if (left <= 0) { goHome(); return; }
+      if (left <= 0) { showInfo(); return; }
       vpCount.textContent = left;
       left--;
       later(tick, 1000);
@@ -380,7 +344,30 @@
 
   video.addEventListener('error', showPlaceholder);
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
-  video.addEventListener('ended', goHome);
+  video.addEventListener('ended', showInfo);
+
+  /* ---------------- HMB info (last page) ---------------- */
+  FOODS.forEach(function (f) {
+    var card = document.createElement('div');
+    card.className = 'food-btn';
+    card.innerHTML =
+      '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
+      '<div class="food-num">~' + fmt(f.target) + '</div>' +
+      '<div class="food-name">' + f.name + '</div>';
+    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(card);
+    new Image().src = f.icon;  // preload
+  });
+
+  function showInfo() {
+    clearTimers();
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    show('info');
+    later(goHome, CFG.infoMs);
+  }
+
+  playAgainBtn.addEventListener('click', goHome);
 
   /* ---------------- reset / idle ---------------- */
   function goHome() {
@@ -388,16 +375,16 @@
     video.pause();
     video.removeAttribute('src');
     video.load();
-    resetRound();
-    show('select');
+    startGame();
   }
 
+  // a half-filled glass left behind empties itself for the next player
   var idleTimer = null;
   function bumpIdle() {
     clearTimeout(idleTimer);
-    if (state.screen !== 'game') return;  // intro waits; video screen returns home on its own
+    if (state.screen !== 'game') return;  // video and info pages move on by themselves
     idleTimer = setTimeout(function () {
-      if (state.screen === 'game' && state.phase === 'play') goHome();
+      if (state.screen === 'game' && state.phase === 'play' && state.total > 0) resetRound();
     }, CFG.idleResetMs);
   }
   document.addEventListener('pointerdown', bumpIdle, true);
@@ -422,13 +409,13 @@
   // preload remaining art
   ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png'].forEach(function (src) { new Image().src = src; });
 
-  // debug helper for testing in a browser console: GAME.go('game'|'video'|'home'), GAME.tap('avocado')
+  // debug helper for testing in a browser console: GAME.go('game'|'video'|'info'), GAME.tap('avocado')
   window.GAME = {
     state: state,
     bgm: bgm,
     go: function (name) {
-      if (name === 'game') startGame();
-      else if (name === 'video') playVideo();
+      if (name === 'video') playVideo();
+      else if (name === 'info') showInfo();
       else goHome();
     },
     tap: function (id) {
@@ -438,5 +425,5 @@
     }
   };
 
-  show('select');
+  startGame();
 })();
