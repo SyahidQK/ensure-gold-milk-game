@@ -122,6 +122,15 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   color: #d8e4ff;
 }
 .home-intro .gold { font-weight: 700; color: var(--gold-light); }
+.approval-code {
+  position: absolute;
+  left: 32px;
+  bottom: 22px;
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(216,228,255,.75);
+  letter-spacing: .3px;
+}
 
 .start-btn {
   position: absolute;
