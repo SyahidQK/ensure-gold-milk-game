@@ -387,7 +387,7 @@
     $('#resultName').textContent = f.name;
     $('#resultFact').innerHTML = f.group === 'hmb'
       ? 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b><br>to get <b>~1.5g of HMB</b>.'
-      : 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b> to get <b>~30g of leucine</b> &mdash;<br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
+      : 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b> to get <b>~30g of leucine</b><br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
     fullOverlay.classList.add('is-shown');
     confetti();
     later(playVideo, CFG.summaryMs);
