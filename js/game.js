@@ -226,8 +226,9 @@
     tapTarget.classList.remove('is-locked');
     tapTarget.style.visibility = '';
     glassPanel.classList.remove('is-perfect');
+    glassWrap.classList.remove('is-shaking', 'is-glowing');
     fullOverlay.classList.remove('is-shown');
-    document.querySelectorAll('.confetti, .fly-food, .tap-burst').forEach(function (c) { c.remove(); });
+    document.querySelectorAll('.confetti, .fly-food, .tap-burst, .particle, .glow-ring').forEach(function (c) { c.remove(); });
     setLevel(0, true);
   }
 
@@ -328,13 +329,54 @@
     sloshTimer = setTimeout(function () { glassSvg.classList.remove('is-sloshing'); }, 500);
   }
 
+  // finale: shake the glass (milk sloshing hard), then glow + flash + particle burst, then the result card
+  var SHAKE_MS = 900;
   function glassFull() {
     state.phase = 'full';
     tapTarget.classList.add('is-locked');
     tapTarget.style.visibility = 'hidden';
-    glassPanel.classList.add('is-perfect');
-    sndWin();
-    later(showResult, CFG.fullMs);
+    glassWrap.classList.add('is-shaking');
+    [0, 150, 300, 450, 600].forEach(function (t) { later(function () { tone(180, 120, 0.12, 0, 0.18); }, t); });
+    later(function () {
+      glassWrap.classList.remove('is-shaking');
+      glassWrap.classList.add('is-glowing');
+      glassPanel.classList.add('is-perfect');
+      particleBurst();
+      sndWin();
+    }, SHAKE_MS);
+    later(showResult, SHAKE_MS + CFG.fullMs);
+  }
+
+  function particleBurst() {
+    var c = stageCenter(glassWrap);
+    var ring = document.createElement('div');
+    ring.className = 'glow-ring';
+    ring.style.left = c.x + 'px';
+    ring.style.top = c.y + 'px';
+    screens.game.appendChild(ring);
+    setTimeout(function () { ring.remove(); }, 1000);
+
+    var colors = ['#fff8d6', '#f3d68a', '#d4a84b', '#ffffff', '#ffe9a8'];
+    for (var i = 0; i < 110; i++) {
+      var p = document.createElement('div');
+      var size = 16 + Math.random() * 32;
+      p.className = 'particle' + (i % 3 === 0 ? ' is-star' : '');
+      p.style.width = p.style.height = size + 'px';
+      p.style.left = (c.x - size / 2) + 'px';
+      p.style.top = (c.y - size / 2) + 'px';
+      p.style.background = colors[i % colors.length];
+      p.style.boxShadow = '0 0 ' + (size * 0.8) + 'px ' + colors[i % colors.length];
+      screens.game.appendChild(p);
+      var a = Math.random() * Math.PI * 2;
+      var d = 280 + Math.random() * 640;
+      var dx = Math.cos(a) * d, dy = Math.sin(a) * d;
+      var anim = p.animate([
+        { transform: 'translate(0,0) scale(.4) rotate(0deg)', opacity: 1 },
+        { transform: 'translate(' + dx * 0.7 + 'px,' + dy * 0.7 + 'px) scale(1.1) rotate(180deg)', opacity: 1, offset: 0.6 },
+        { transform: 'translate(' + dx + 'px,' + (dy + 120) + 'px) scale(.6) rotate(320deg)', opacity: 0 }
+      ], { duration: 1100 + Math.random() * 700, easing: 'cubic-bezier(.15,.7,.4,1)' });
+      anim.onfinish = (function (el) { return function () { el.remove(); }; })(p);
+    }
   }
 
   // only the chosen food, with its fact from the booth's right-wall panel

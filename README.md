@@ -5,11 +5,11 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
 ## Flow
 1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "HMB is found in small amounts
    in some foods…", and **Press to start**. The game only starts from that button.
-2. **Choose a food to start** – the HMB info pills and the 8 foods in two cards (Foods high in Leucine / Foods with HMB).
+2. **Choose a food to start** – the HMB intro line and the 8 foods in two cards (Foods high in Leucine / Foods with HMB).
    Amounts are hidden here. Tap a food, then **Start**.
 3. **Fill the glass** – one "TAP!" target showing the chosen food. Every tap fills 3–6% of the glass and the target
    jumps to a new random spot on either side of the glass (at least 300 px away). About 21–25 taps to fill.
-4. **Glass full!** – only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
+4. **Glass full!** – the glass shakes hard (~1 s), then glows gold with a flash and a particle burst; then a card with only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
    to get ~1.5g of HMB" (auto-continues after 10 s, or tap "Watch the video").
 5. **HMB video** (background music muted) → back to the main page.
 
