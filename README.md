@@ -7,8 +7,10 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
    in some foods…", and **Press to start**. The game only starts from that button.
 2. **Choose a food to start** – the HMB intro line and the 8 foods in two cards (Foods high in Leucine / Foods with HMB).
    Amounts are hidden here. Tap a food, then **Start**.
-3. **Fill the glass** – one "TAP!" target showing the chosen food. Every tap fills 3–6% of the glass and the target
-   jumps to a new random spot on either side of the glass (at least 300 px away). About 21–25 taps to fill.
+3. **Fill the glass** – the glass is full when the player reaches the chosen food's amount (e.g. ~7 chicken breasts,
+   ~3,000 avocados). A counter under the title shows it live, e.g. "1,137 / ~3,000 Servings of Cooked Asparagus".
+   One "TAP!" target shows the food; every tap adds a random 4–8% of the amount (0.3–0.6 chicken breasts,
+   120–240 avocados…) and the target jumps to a new random spot beside the glass. Every food takes 15–20 taps.
 4. **Glass full!** – the glass shakes hard (~1 s), then glows gold with a flash and a particle burst; then a card with only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
    to get ~1.5g of HMB" (auto-continues after 10 s, or tap "Watch the video").
 5. **HMB video** (background music muted) → back to the main page.
@@ -42,8 +44,8 @@ Chrome only plays sound on its own when launched with `--autoplay-policy=no-user
 
 ## Changing content / tuning
 Everything is in `js/foods.js`:
-- `FOODS` – names, amounts (shown only on the result card), icons, `word` (used in the game title), `label` (the "+1 ___" pop-up).
-- `GAME_CONFIG` – fill per tap (`tapFillMin`/`tapFillMax`), idle reset (60 s), result card time, video path, sound on/off, BGM start point / volume / fade
+- `FOODS` – names, `target` (the amount that fills one glass; hidden while choosing, counted up during play), icons, `word` (used in the game title).
+- `GAME_CONFIG` – amount per tap (`tapMinPct`/`tapMaxPct`, % of the food's amount), idle reset (60 s), result card time, video path, sound on/off, BGM start point / volume / fade
 
 ## Font
 All text uses **Chewy** (`assets/fonts/Chewy-Regular.ttf`), bundled with the game, so nothing needs installing on the booth PC.

@@ -53,7 +53,13 @@
     <!-- ============ GAME: FILL THE GLASS ============ -->
     <section id="game" class="screen" aria-label="Fill the glass">
       <h2 class="game-title">Tap the <span id="gameWord">food</span> to fill up the glass<br>of Ensure Gold!!</h2>
-      <div class="game-rule">Catch it! It jumps after every tap!</div>
+      <!-- live count of the chosen food toward the amount that fills one glass -->
+      <div class="game-count">
+        <img id="countIcon" src="" alt="">
+        <span id="countNow" class="count-now">0</span>
+        <span class="count-of">/ <span id="countTarget">~3,000</span></span>
+        <span id="countUnit" class="count-unit">Avocados</span>
+      </div>
 
       <div class="glass-panel">
         <div class="glass-wrap">

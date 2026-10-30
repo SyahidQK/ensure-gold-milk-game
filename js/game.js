@@ -30,7 +30,8 @@
     screen: 'info',
     food: null,     // the food chosen on the select screen
     phase: 'play',  // play → full (glass reached 100%)
-    total: 0,       // % filled, capped at 100
+    value: 0,       // amount of the chosen food eaten so far (counts up to food.target)
+    total: 0,       // % filled = value / target, capped at 100
     taps: 0,
     pos: null,      // tap target centre {x, y} in stage coordinates
     lastTap: 0,
@@ -38,6 +39,12 @@
   };
 
   var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
+  // amounts of a food: one decimal for small targets (e.g. 3.4 of ~7 chicken breasts), whole numbers otherwise
+  function amt(n, target) {
+    if (target >= 100) return fmt(n);
+    var r = Math.round(n * 10) / 10;
+    return r % 1 === 0 ? String(r) : r.toFixed(1);
+  }
 
   /* ---------------- stage scaling ---------------- */
   function fit() {
@@ -214,6 +221,10 @@
     resetRound();
     gameWord.textContent = f.word;
     tapIcon.src = f.icon;
+    $('#countIcon').src = f.icon;
+    $('#countTarget').textContent = '~' + amt(f.target, f.target);
+    $('#countUnit').textContent = f.name;
+    countNow.textContent = '0';
     state.pos = null;
     moveTarget();
     show('game');
@@ -221,8 +232,11 @@
 
   function resetRound() {
     state.phase = 'play';
+    state.value = 0;
     state.total = 0;
     state.taps = 0;
+    cancelAnimationFrame(countTween);
+    countNow.textContent = '0';
     tapTarget.classList.remove('is-locked');
     tapTarget.style.visibility = '';
     glassPanel.classList.remove('is-perfect');
@@ -275,17 +289,39 @@
     state.lastTap = now;
     bumpIdle();
 
-    var add = CFG.tapFillMin + Math.random() * (CFG.tapFillMax - CFG.tapFillMin);
-    state.total = Math.min(100, state.total + add);
+    var f = state.food;
+    var pct = CFG.tapMinPct + Math.random() * (CFG.tapMaxPct - CFG.tapMinPct);
+    var before = state.value;
+    state.value = Math.min(f.target, state.value + f.target * pct / 100);
+    state.total = state.value / f.target * 100;
     state.taps++;
     setLevel(state.total);
+    countTo(before, state.value);
     slosh();
     sndPop(state.total / 100);
     burstAt(state.pos);
-    flyFood(state.food, state.pos);
+    flyFood(f, state.pos, state.value - before);
 
-    if (state.total >= 100) glassFull();
+    if (state.value >= f.target) glassFull();
     else moveTarget();
+  }
+
+  // live count of the chosen food, e.g. "1,245 / ~3,000 Avocados"
+  var countNow = $('#countNow');
+  var countTween = null;
+  function countTo(from, to) {
+    var target = state.food.target;
+    var t0 = performance.now();
+    cancelAnimationFrame(countTween);
+    (function step(now) {
+      var k = Math.min(1, (now - t0) / 350);
+      var v = from + (to - from) * (1 - Math.pow(1 - k, 3));
+      countNow.textContent = amt(k < 1 ? v : to, target);
+      if (k < 1) countTween = requestAnimationFrame(step);
+    })(t0);
+    countNow.classList.remove('bump');
+    void countNow.offsetWidth;
+    countNow.classList.add('bump');
   }
 
   function burstAt(p) {
@@ -297,7 +333,7 @@
     setTimeout(function () { b.remove(); }, 500);
   }
 
-  function flyFood(f, from) {
+  function flyFood(f, from, added) {
     var to = stageCenter(glassWrap);
     var el = document.createElement('div');
     el.className = 'fly-food';
@@ -317,7 +353,7 @@
 
     var plus = document.createElement('div');
     plus.className = 'plus';
-    plus.textContent = '+1 ' + f.label;
+    plus.textContent = '+' + amt(added, f.target);
     glassWrap.querySelector('.fly-layer').appendChild(plus);
     setTimeout(function () { plus.remove(); }, 950);
   }

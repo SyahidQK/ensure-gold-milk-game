@@ -3,8 +3,10 @@
  * Food figures come from the booth "Right Wall" panel (HMB Booth.pdf).
  */
 window.GAME_CONFIG = {
-  tapFillMin: 3,           // each tap fills a random 3–6% of the glass (≈ 22 taps to fill)
-  tapFillMax: 6,
+  // each tap adds a random 4–8% of the chosen food's amount (e.g. 120–240 avocados, 0.3–0.6 chicken
+  // breasts), so every food takes about 15–20 taps; the last tap lands exactly on the amount
+  tapMinPct: 4,
+  tapMaxPct: 8,
   idleResetMs: 60000,      // no touch for this long on the food choice or game → back to the main page
   fullMs: 1800,            // pause on the full glass before the result card
   summaryMs: 10000,        // result card auto-continues to the video after this long
@@ -18,7 +20,7 @@ window.GAME_CONFIG = {
 };
 
 /*
- * target: how much of this food it takes (shown only on the result card, never while choosing)
+ * target: how much of this food fills the glass (counted up during play; hidden while choosing)
  * group:  'leucine' → amount to get ~30g leucine (5% → ~1.5g HMB); 'hmb' → amount to get ~1.5g HMB
  * word:   used in "Tap the ___ to fill up the glass"
  * label:  short name for the "+1 ___" pop-up
