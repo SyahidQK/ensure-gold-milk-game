@@ -1,7 +1,8 @@
 @font-face {
-  font-family: 'Fredoka';
-  src: url('../assets/fonts/fredoka.woff2') format('woff2');
-  font-weight: 400 700;
+  font-family: 'Chewy';
+  src: url('../assets/fonts/Chewy-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
   font-display: block;
 }
 
@@ -27,7 +28,10 @@ html, body {
   height: 100%;
   overflow: hidden;
   background: #000;
-  font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+  /* Chewy (the game's font) for every piece of text; it has one weight, so never fake-bold it */
+  font-family: 'Chewy', 'Segoe UI', system-ui, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
   color: var(--white);
   -webkit-user-select: none;
   user-select: none;
@@ -36,6 +40,7 @@ html, body {
   touch-action: none;
   overscroll-behavior: none;
 }
+b, h1, h2 { font-weight: 400; }
 
 img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
 button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; touch-action: manipulation; }
@@ -65,12 +70,26 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   transition: opacity .5s ease;
 }
 
-.gold { color: var(--gold); }
+.gold { color: var(--gold-light); }
+
+/* HD logo: the artwork sits in a 1268x648 area of a 2000x1024 transparent image; crop to it */
+.home-logo, .select-logo {
+  position: relative;
+  aspect-ratio: 1268 / 648;
+  overflow: hidden;
+}
+.home-logo img, .select-logo img {
+  position: absolute;
+  width: calc(2000 / 1268 * 100%);
+  left: calc(-366 / 1268 * 100%);
+  top: calc(-188 / 648 * 100%);
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.45));
+}
 
 /* =================================================================
    MAIN PAGE – logo, game name, HMB line + START
    ================================================================= */
-#info {
+#info, #select {
   background:
     radial-gradient(1200px 700px at 50% 0%, #17398f 0%, transparent 70%),
     radial-gradient(900px 600px at 100% 100%, #10307d 0%, transparent 70%),
@@ -90,46 +109,28 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   position: absolute;
   left: 0;
   right: 0;
-  top: 150px;
+  top: 90px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
-.home-logo {
-  padding: 22px 50px;
-  border-radius: 36px;
-  background: var(--white);
-  border: 6px solid var(--gold);
-  box-shadow: 0 0 0 5px rgba(243,214,138,.25), 0 18px 44px rgba(0,0,0,.45);
-}
-.home-logo img { display: block; height: 170px; }
+.home-logo { width: 620px; }
 .home-title {
-  margin-top: 44px;
-  font-size: 160px;
-  font-weight: 700;
-  line-height: 1.02;
+  margin-top: 26px;
+  font-size: 170px;
+  line-height: 1;
   color: var(--cream);
   text-shadow: 0 7px 0 var(--gold-dark), 0 14px 34px rgba(0,0,0,.5);
-  letter-spacing: 1px;
+  letter-spacing: 2px;
 }
 .home-intro {
-  margin-top: 40px;
+  margin-top: 34px;
   width: 1300px;
-  font-size: 40px;
-  font-weight: 500;
-  line-height: 1.35;
+  font-size: 42px;
+  line-height: 1.3;
   color: #d8e4ff;
-}
-.home-intro .gold { font-weight: 700; color: var(--gold-light); }
-.approval-code {
-  position: absolute;
-  left: 32px;
-  bottom: 22px;
-  font-size: 18px;
-  font-weight: 500;
-  color: rgba(216,228,255,.75);
-  letter-spacing: .3px;
+  letter-spacing: .5px;
 }
 
 .start-btn {
@@ -144,10 +145,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   background: linear-gradient(180deg, #f6dc8f, var(--gold) 55%, var(--gold-dark));
   border: 5px solid #fff2c4;
   color: var(--navy-800);
-  font-size: 50px;
-  font-weight: 700;
+  font-size: 56px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   box-shadow: 0 10px 0 #7d5a14, 0 18px 40px rgba(0,0,0,.45);
   transition: transform .12s ease, box-shadow .12s ease, filter .3s ease, opacity .3s ease;
 }
@@ -160,8 +160,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .start-btn:disabled {
   filter: grayscale(.7) brightness(.8);
   opacity: .7;
-  font-size: 36px;
-  letter-spacing: 0;
+  font-size: 40px;
+  letter-spacing: 1px;
   cursor: default;
 }
 @keyframes breathe {
@@ -170,7 +170,173 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 
 /* =================================================================
-   SCREEN 2 – FILL THE GLASS
+   CHOOSE A FOOD
+   ================================================================= */
+.select-header {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.select-logo {
+  position: absolute;
+  left: 50px;
+  top: -6px;
+  width: 270px;
+}
+.intro {
+  width: 1100px;
+  margin: 0 auto;
+  font-size: 32px;
+  line-height: 1.25;
+  color: #d8e4ff;
+  letter-spacing: .5px;
+}
+.select-title {
+  margin-top: 12px;
+  font-size: 96px;
+  line-height: 1;
+  color: var(--cream);
+  text-shadow: 0 5px 0 var(--gold-dark), 0 10px 26px rgba(0,0,0,.45);
+  letter-spacing: 1px;
+}
+
+.need-row {
+  position: absolute;
+  top: 252px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.need-label {
+  font-size: 30px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-right: 8px;
+  padding: 10px 22px;
+  border: 3px solid var(--gold);
+  border-radius: 18px;
+  letter-spacing: 1px;
+}
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 84px;
+  padding: 0 26px 0 10px;
+  border-radius: 42px;
+  font-size: 23px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  max-width: 420px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
+.pill b { color: var(--gold-light); }
+.pill-navy { background: #0d1b4d; border: 3px solid #3a5bb6; }
+.pill-blue { background: var(--blue); }
+.pill-blue b { color: #ffe9a8; }
+.pill-gold { background: var(--gold); color: var(--navy-800); }
+.pill-gold b { color: var(--navy-800); }
+.pill-ico {
+  flex: 0 0 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy-800);
+  display: grid;
+  place-items: center;
+}
+.pill-ico svg { width: 38px; height: 38px; }
+.pill-ico-hex { font-size: 17px; color: var(--navy-800); border: 3px solid var(--navy-800); }
+.pill-arrow { color: var(--gold); font-size: 26px; }
+
+.food-cards {
+  position: absolute;
+  top: 384px;
+  left: 70px;
+  right: 70px;
+  display: flex;
+  gap: 50px;
+}
+.food-card {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(180deg, #ffffff, #f4f6fc);
+  border: 5px solid var(--gold);
+  border-radius: 34px;
+  padding: 58px 22px 22px;
+  box-shadow: 0 16px 40px rgba(0,0,0,.4);
+}
+.card-head {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: var(--navy-900);
+  border: 4px solid var(--gold);
+  border-radius: 40px;
+  padding: 8px 42px;
+  font-size: 34px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.food-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 4px 14px;
+  border-radius: 26px;
+  color: var(--navy-800);
+  transition: transform .15s ease, background .2s ease, opacity .2s ease;
+}
+.food-btn:active { transform: scale(.95); }
+.food-icon {
+  width: 172px;
+  height: 172px;
+  border-radius: 50%;
+  border: 6px solid var(--gold);
+  background: var(--navy-700);
+  box-shadow: 0 8px 18px rgba(10,26,82,.35), inset 0 0 0 2px rgba(255,255,255,.25);
+  overflow: hidden;
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+.food-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.food-name {
+  margin-top: 12px;
+  font-size: 27px;
+  line-height: 1.1;
+  text-align: center;
+  color: var(--orange);
+  min-height: 60px;
+  letter-spacing: .3px;
+}
+.food-btn.is-selected { background: #fff3cf; }
+.food-btn.is-selected .food-icon {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 8px var(--gold-light), 0 0 40px 10px rgba(212,168,75,.85);
+  animation: pop .45s ease;
+}
+.food-cards.has-selection .food-btn:not(.is-selected) { opacity: .5; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.16); }
+  100% { transform: scale(1.06); }
+}
+
+/* =================================================================
+   GAME – FILL THE GLASS
    ================================================================= */
 #game {
   background: url('../assets/bg-farm.svg') center / cover no-repeat, #8fd0f6;
@@ -178,17 +344,30 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 .game-title {
   position: absolute;
-  top: 22px;
+  top: 18px;
   left: 0;
   right: 0;
   text-align: center;
-  font-size: 62px;
-  font-weight: 700;
-  line-height: 1.15;
+  font-size: 66px;
+  line-height: 1.1;
   color: #fff8d6;
   -webkit-text-stroke: 3px #6b3d0f;
   paint-order: stroke fill;
   text-shadow: 0 6px 0 #6b3d0f, 0 12px 24px rgba(0,0,0,.25);
+  letter-spacing: 1px;
+}
+.game-rule {
+  position: absolute;
+  top: 184px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 34px;
+  border-radius: 40px;
+  background: rgba(10,26,82,.88);
+  border: 3px solid var(--gold);
+  font-size: 32px;
+  white-space: nowrap;
+  letter-spacing: .5px;
 }
 
 .glass-panel {
@@ -207,6 +386,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   gap: 70px;
   padding-left: 40px;
 }
+.glass-panel.is-perfect { box-shadow: 0 0 0 10px rgba(243,214,138,.5), 0 0 90px rgba(243,214,138,.9); }
 
 .glass-wrap {
   position: relative;
@@ -240,7 +420,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   border: 4px solid var(--gold);
   overflow: hidden;
   box-shadow: 0 6px 16px rgba(0,0,0,.35);
-  pointer-events: none;  /* spawns over the tap button; must not swallow taps */
+  pointer-events: none;  /* spawns over the tap target; must not swallow taps */
   will-change: transform, opacity;
 }
 .fly-food img { width: 100%; height: 100%; object-fit: cover; }
@@ -249,8 +429,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   left: 50%;
   top: -10px;
   transform: translateX(-50%);
-  font-size: 52px;
-  font-weight: 700;
+  font-size: 54px;
   color: var(--gold-light);
   -webkit-text-stroke: 2px var(--navy-900);
   paint-order: stroke fill;
@@ -292,75 +471,77 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .meter-pct {
   min-width: 140px;
-  font-size: 58px;
-  font-weight: 700;
-  transition: color .3s ease;
+  font-size: 64px;
 }
-.glass-panel.is-perfect { box-shadow: 0 0 0 10px rgba(243,214,138,.5), 0 0 90px rgba(243,214,138,.9); }
 
-.game-rule {
+/* the jumping tap target: placed by JS (left/top = its centre) */
+.tap-target {
   position: absolute;
-  top: 186px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 8px 34px;
-  border-radius: 40px;
-  background: rgba(10,26,82,.88);
-  border: 3px solid var(--gold);
-  font-size: 30px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.game-rule b { color: var(--gold-light); }
-
-/* six food buttons around the glass (positions follow the mockup) */
-.gfood {
-  position: absolute;
-  width: 200px;
+  width: 220px;
+  height: 250px;
+  margin: -110px 0 0 -110px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 5;
 }
-.gfood-circle {
-  position: relative;
-  width: 200px;
-  height: 200px;
+.tap-target.is-locked { pointer-events: none; }
+.tap-circle {
+  display: block;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  border: 8px solid var(--gold);
+  border: 10px solid var(--gold);
   background: var(--navy-700);
   overflow: hidden;
-  box-shadow: 0 0 0 4px rgba(255,255,255,.5), 0 14px 30px rgba(5,13,51,.45);
-  transition: transform .12s ease;
+  box-shadow: 0 0 0 6px rgba(255,255,255,.7), 0 0 40px 10px rgba(243,214,138,.75), 0 16px 34px rgba(5,13,51,.5);
+  animation: tapPulse .8s ease-in-out infinite;
 }
-.gfood-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.gfood.is-hit .gfood-circle { animation: hit .18s ease; }
-@keyframes hit {
-  0% { transform: scale(1); }
-  40% { transform: scale(.88); }
-  100% { transform: scale(1); }
-}
-.gfood-name {
-  margin-top: -24px;
-  z-index: 1;
-  padding: 4px 20px;
+.tap-circle img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tap-badge {
+  margin-top: -34px;
+  padding: 2px 26px;
   border-radius: 30px;
-  background: linear-gradient(180deg, #f6dc8f, var(--gold) 60%, var(--gold-dark));
-  border: 3px solid #fff2c4;
-  color: var(--navy-800);
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.15;
-  white-space: nowrap;
-  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  background: linear-gradient(180deg, #ff8a5c, #e2672f);
+  border: 4px solid #fff;
+  color: #fff;
+  font-size: 40px;
+  letter-spacing: 2px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.35);
+  animation: wiggle .5s ease-in-out infinite;
 }
-.gfood.slot-left-1  { left: 145px;  top: 222px; }
-.gfood.slot-left-2  { left: 329px;  top: 470px; }
-.gfood.slot-left-3  { left: 216px;  top: 718px; }
-.gfood.slot-right-1 { left: 1603px; top: 222px; }
-.gfood.slot-right-2 { left: 1432px; top: 470px; }
-.gfood.slot-right-3 { left: 1540px; top: 718px; }
-.game-foods.is-locked .gfood { pointer-events: none; }
+.tap-target.is-popping { animation: popIn .28s cubic-bezier(.3,1.6,.5,1); }
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes tapPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg) scale(1.08); }
+}
+/* burst left behind where the target was tapped */
+.tap-burst {
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  margin: -120px 0 0 -120px;
+  border-radius: 50%;
+  border: 10px solid var(--gold-light);
+  pointer-events: none;
+  animation: burst .45s ease-out forwards;
+}
+@keyframes burst {
+  from { transform: scale(.5); opacity: 1; }
+  to { transform: scale(1.5); opacity: 0; }
+}
 
+/* =================================================================
+   GLASS FULL – result card
+   ================================================================= */
 .full-overlay {
   position: absolute;
   inset: 0;
@@ -387,58 +568,43 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 .full-overlay.is-shown .full-card { transform: scale(1); }
 .full-title {
-  font-size: 120px;
-  font-weight: 700;
+  font-size: 110px;
   line-height: 1;
   color: var(--gold-light);
   text-shadow: 0 6px 0 var(--gold-dark);
+  letter-spacing: 2px;
 }
-.full-msg { margin-top: 26px; font-size: 46px; font-weight: 500; line-height: 1.3; }
-.full-msg b { color: var(--gold-light); }
-
-.summary-card { width: 1180px; padding: 46px 60px 44px; }
-.summary-card .full-title { font-size: 100px; }
-.summary-sub { margin-top: 14px; font-size: 34px; color: #d8e4ff; }
-.summary-list {
-  margin: 28px auto 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-.summary-row {
+.result-card { width: 1180px; padding: 46px 60px 44px; }
+.result-food {
+  margin-top: 26px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 18px;
-  border-radius: 24px;
-  background: rgba(255,255,255,.08);
-  border: 2px solid rgba(243,214,138,.4);
-  text-align: left;
+  justify-content: center;
+  gap: 40px;
 }
-.summary-row.is-zero { opacity: .35; }
-.summary-row img {
-  width: 92px;
-  height: 92px;
+.result-food img {
+  width: 210px;
+  height: 210px;
   border-radius: 50%;
-  border: 4px solid var(--gold);
-  flex: 0 0 auto;
+  border: 8px solid var(--gold);
+  box-shadow: 0 0 40px rgba(243,214,138,.6);
 }
-.summary-row .s-name { font-size: 30px; font-weight: 600; line-height: 1.15; }
-.summary-row .s-count { font-size: 44px; font-weight: 700; color: var(--gold-light); line-height: 1.1; }
-.summary-row .s-pct { font-size: 26px; color: #d8e4ff; margin-left: 6px; font-weight: 500; }
-.summary-total { margin-top: 24px; font-size: 38px; font-weight: 600; }
-.summary-total b { color: var(--gold-light); }
-.summary-note { margin-top: 10px; font-size: 26px; color: #d8e4ff; }
+.result-food > div { text-align: left; }
+.result-num { font-size: 130px; line-height: 1; color: var(--white); letter-spacing: 2px; }
+.result-name { margin-top: 6px; font-size: 52px; line-height: 1.05; color: #ffb48a; max-width: 560px; }
+.result-fact { margin-top: 26px; font-size: 40px; line-height: 1.3; letter-spacing: .5px; }
+.result-fact b { color: var(--gold-light); }
+.summary-note { margin-top: 14px; font-size: 30px; color: #d8e4ff; letter-spacing: .3px; }
 .summary-note b { color: var(--gold-light); }
 .summary-next {
-  margin-top: 26px;
-  padding: 14px 50px;
+  margin-top: 28px;
+  padding: 12px 54px;
   border-radius: 50px;
   background: linear-gradient(180deg, #f6dc8f, var(--gold) 55%, var(--gold-dark));
   border: 4px solid #fff2c4;
   color: var(--navy-800);
-  font-size: 34px;
-  font-weight: 700;
+  font-size: 40px;
+  letter-spacing: 1px;
   box-shadow: 0 6px 0 #7d5a14;
 }
 .summary-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #7d5a14; }
@@ -472,7 +638,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 
 /* =================================================================
-   SCREEN 3 – VIDEO
+   VIDEO
    ================================================================= */
 #video { background: #000; }
 #hmbVideo { width: 100%; height: 100%; object-fit: contain; background: #000; }
@@ -488,18 +654,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
     linear-gradient(180deg, var(--navy-800), var(--navy-900));
 }
 .video-placeholder.is-shown { display: flex; }
-.vp-logo {
-  height: 150px;
-  padding: 18px 34px;
-  background: #fff;
-  border: 5px solid var(--gold);
-  border-radius: 30px;
-}
-.vp-title { margin-top: 50px; font-size: 110px; font-weight: 700; color: var(--gold-light); }
-.vp-sub { font-size: 54px; font-weight: 500; color: #d8e4ff; }
-.vp-count { margin-top: 60px; font-size: 32px; color: #9fb4e8; }
+.vp-logo { width: 760px; margin: -60px 0 -80px; }
+.vp-title { margin-top: 20px; font-size: 120px; color: var(--gold-light); letter-spacing: 2px; }
+.vp-sub { font-size: 60px; color: #d8e4ff; }
+.vp-count { margin-top: 60px; font-size: 34px; color: #9fb4e8; }
 
-/* Hidden admin hot-corner (top-right; top-left holds the back button) */
+/* Hidden admin hot-corner (top-right) */
 .admin-corner {
   position: fixed;
   right: 0;

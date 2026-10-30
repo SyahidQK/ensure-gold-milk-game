@@ -3,9 +3,11 @@
  * Food figures come from the booth "Right Wall" panel (HMB Booth.pdf).
  */
 window.GAME_CONFIG = {
-  idleResetMs: 60000,      // no touch for this long mid-game → back to the main page
-  fullMs: 1800,            // pause on the full glass before the summary
-  summaryMs: 9000,         // summary auto-continues to the video after this long
+  tapFillMin: 3,           // each tap fills a random 3–6% of the glass (≈ 22 taps to fill)
+  tapFillMax: 6,
+  idleResetMs: 60000,      // no touch for this long on the food choice or game → back to the main page
+  fullMs: 1800,            // pause on the full glass before the result card
+  summaryMs: 10000,        // result card auto-continues to the video after this long
   videoSrc: 'assets/video/hmb.mp4',
   placeholderMs: 6000,     // shown while the client video is not yet in place
   sound: true,             // tap / win sound effects
@@ -16,20 +18,20 @@ window.GAME_CONFIG = {
 };
 
 /*
- * fill: % of the glass one tap adds (not shown to players). The glass stops at
- *       100%; lower values = more taps to fill (current mix ≈ 30 taps).
- * slot: position around the glass on the game screen (left-1..3 / right-1..3),
- *       null = main info page only.
+ * target: how much of this food it takes (shown only on the result card, never while choosing)
+ * group:  'leucine' → amount to get ~30g leucine (5% → ~1.5g HMB); 'hmb' → amount to get ~1.5g HMB
+ * word:   used in "Tap the ___ to fill up the glass"
+ * label:  short name for the "+1 ___" pop-up
  */
 window.FOODS = [
   // Foods high in Leucine
-  { id: 'eggs',        group: 'leucine', target: 50,   name: 'Eggs',                           label: 'Eggs',      fill: 4, slot: 'left-1',  icon: 'assets/icons/eggs.png' },
-  { id: 'steak',       group: 'leucine', target: 11,   name: 'Beef Steaks',                    label: 'Beef Steak', fill: 5, slot: 'right-1', icon: 'assets/icons/steak.png' },
-  { id: 'chicken',     group: 'leucine', target: 7,    name: 'Chicken Breasts',                label: 'Chicken',   fill: 6, slot: 'right-2', icon: 'assets/icons/chicken.png' },
-  { id: 'soybeans',    group: 'leucine', target: 10,   name: 'Cups of Soybeans',               fill: 0,  slot: null,      icon: 'assets/icons/soybeans.svg' },
+  { id: 'eggs',        group: 'leucine', target: 50,   name: 'Eggs',                           word: 'eggs',           label: 'Egg',         icon: 'assets/icons/eggs.png' },
+  { id: 'steak',       group: 'leucine', target: 11,   name: 'Beef Steaks',                    word: 'beef steak',     label: 'Beef Steak',  icon: 'assets/icons/steak.png' },
+  { id: 'chicken',     group: 'leucine', target: 7,    name: 'Chicken Breasts',                word: 'chicken breast', label: 'Chicken',     icon: 'assets/icons/chicken.png' },
+  { id: 'soybeans',    group: 'leucine', target: 10,   name: 'Cups of Soybeans',               word: 'soybeans',       label: 'Soybeans',    icon: 'assets/icons/soybeans.svg' },
   // Foods with HMB
-  { id: 'avocado',     group: 'hmb',     target: 3000, name: 'Avocados',                       label: 'Avocado',   fill: 1,  slot: 'left-2',  icon: 'assets/icons/avocado.png' },
-  { id: 'asparagus',   group: 'hmb',     target: 3000, name: 'Servings of Cooked Asparagus',   label: 'Asparagus', fill: 2, slot: 'left-3',  icon: 'assets/icons/asparagus.png' },
-  { id: 'cauliflower', group: 'hmb',     target: 6500, name: 'Servings of Cooked Cauliflower', fill: 0,  slot: null,      icon: 'assets/icons/cauliflower.svg' },
-  { id: 'catfish',     group: 'hmb',     target: 750,  name: 'Catfish Fillets',                label: 'Catfish',   fill: 3, slot: 'right-3', icon: 'assets/icons/catfish.png' }
+  { id: 'avocado',     group: 'hmb',     target: 3000, name: 'Avocados',                       word: 'avocado',        label: 'Avocado',     icon: 'assets/icons/avocado.png' },
+  { id: 'asparagus',   group: 'hmb',     target: 3000, name: 'Servings of Cooked Asparagus',   word: 'asparagus',      label: 'Asparagus',   icon: 'assets/icons/asparagus.png' },
+  { id: 'cauliflower', group: 'hmb',     target: 6500, name: 'Servings of Cooked Cauliflower', word: 'cauliflower',    label: 'Cauliflower', icon: 'assets/icons/cauliflower.svg' },
+  { id: 'catfish',     group: 'hmb',     target: 750,  name: 'Catfish Fillets',                word: 'catfish',        label: 'Catfish',     icon: 'assets/icons/catfish.png' }
 ];

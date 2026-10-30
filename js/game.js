@@ -6,13 +6,15 @@
 
   var $ = function (sel) { return document.querySelector(sel); };
   var stage = $('#stage');
-  // flow: info (main page) → start → game → (glass full) summary → video → info
-  var screens = { info: $('#info'), game: $('#game'), video: $('#video') };
-
-  var GAME_FOODS = FOODS.filter(function (f) { return f.slot && f.fill > 0; });
+  // flow: info (main page) → select (choose a food) → game → (glass full) result → video → info
+  var screens = { info: $('#info'), select: $('#select'), game: $('#game'), video: $('#video') };
 
   var startBtn = $('#startBtn');
-  var gameFoods = $('#gameFoods');
+  var goBtn = $('#goBtn');
+  var foodCards = document.querySelector('.food-cards');
+  var gameWord = $('#gameWord');
+  var tapTarget = $('#tapTarget');
+  var tapIcon = $('#tapIcon');
   var milk = $('#milk');
   var glassSvg = $('#glassSvg');
   var glassWrap = document.querySelector('.glass-wrap');
@@ -20,21 +22,22 @@
   var meterFill = $('#meterFill');
   var meterPct = $('#meterPct');
   var fullOverlay = $('#fullOverlay');
-  var summaryList = $('#summaryList');
-  var summaryTaps = $('#summaryTaps');
   var video = $('#hmbVideo');
   var placeholder = $('#videoPlaceholder');
   var vpCount = $('#vpCount');
 
   var state = {
-    screen: 'game',
+    screen: 'info',
+    food: null,     // the food chosen on the select screen
     phase: 'play',  // play → full (glass reached 100%)
     total: 0,       // % filled, capped at 100
-    taps: {},       // food id → number of taps this round
+    taps: 0,
+    pos: null,      // tap target centre {x, y} in stage coordinates
     lastTap: 0,
     timers: []
   };
 
+  var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
 
   /* ---------------- stage scaling ---------------- */
   function fit() {
@@ -93,6 +96,7 @@
     o.stop(t + dur + 0.02);
   }
   function sndPop(progress) { tone(420 + progress * 500, 900 + progress * 600, 0.14, 0, 0.22); }
+  function sndSelect() { tone(660, 990, 0.12, 0, 0.18); }
   function sndWin() {
     [523, 659, 784, 1047].forEach(function (f, i) { tone(f, f * 1.01, 0.35, i * 0.12, 0.25); });
   }
@@ -151,39 +155,96 @@
     bumpIdle();
   }
 
-  /* ---------------- GAME: tap foods until the glass is full ---------------- */
-  GAME_FOODS.forEach(function (f) {
+  /* ---------------- MAIN PAGE ---------------- */
+  startBtn.addEventListener('click', showSelect);
+
+  /* ---------------- CHOOSE A FOOD (amounts hidden) ---------------- */
+  FOODS.forEach(function (f) {
     var btn = document.createElement('button');
-    btn.className = 'gfood slot-' + f.slot;
-    btn.setAttribute('aria-label', f.name);
+    btn.className = 'food-btn';
+    btn.dataset.id = f.id;
     btn.innerHTML =
-      '<div class="gfood-circle"><img src="' + f.icon + '" alt=""></div>' +
-      '<div class="gfood-name">' + f.label + '</div>';
-    btn.addEventListener('pointerdown', function (e) {
-      e.preventDefault();
-      onFoodTap(f, btn);
-    });
-    btn.addEventListener('animationend', function (e) {
-      if (e.animationName === 'hit') btn.classList.remove('is-hit');
-    });
-    gameFoods.appendChild(btn);
+      '<div class="food-icon"><img src="' + f.icon + '" alt=""></div>' +
+      '<div class="food-name">' + f.name + '</div>';
+    btn.addEventListener('pointerdown', function () { selectFood(f); });
+    document.querySelector('.food-grid[data-group="' + f.group + '"]').appendChild(btn);
+    new Image().src = f.icon;  // preload
   });
 
-  function startGame() {
+  function showSelect() {
     clearTimers();
+    resetSelect();
+    show('select');
+  }
+
+  function selectFood(f) {
+    if (state.screen !== 'select') return;
+    state.food = f;
+    document.querySelectorAll('.food-btn').forEach(function (b) {
+      b.classList.toggle('is-selected', b.dataset.id === f.id);
+    });
+    foodCards.classList.add('has-selection');
+    goBtn.disabled = false;
+    goBtn.querySelector('.start-text').textContent = 'Start';
+    sndSelect();
+  }
+
+  function resetSelect() {
+    state.food = null;
+    document.querySelectorAll('.food-btn').forEach(function (b) { b.classList.remove('is-selected'); });
+    foodCards.classList.remove('has-selection');
+    goBtn.disabled = true;
+    goBtn.querySelector('.start-text').textContent = 'Tap a food above';
+  }
+
+  goBtn.addEventListener('click', function () {
+    if (state.food) startGame(state.food);
+  });
+
+  /* ---------------- GAME: tap the jumping target until the glass is full ---------------- */
+  // areas (target centres, stage coords) left and right of the glass panel, below the title
+  var ZONES = [
+    { x1: 150, x2: 450, y1: 370, y2: 900 },
+    { x1: 1470, x2: 1770, y1: 370, y2: 900 }
+  ];
+
+  function startGame(f) {
+    clearTimers();
+    state.food = f;
     resetRound();
+    gameWord.textContent = f.word;
+    tapIcon.src = f.icon;
+    state.pos = null;
+    moveTarget();
     show('game');
   }
 
   function resetRound() {
     state.phase = 'play';
     state.total = 0;
-    state.taps = {};
-    gameFoods.classList.remove('is-locked');
+    state.taps = 0;
+    tapTarget.classList.remove('is-locked');
+    tapTarget.style.visibility = '';
     glassPanel.classList.remove('is-perfect');
     fullOverlay.classList.remove('is-shown');
-    document.querySelectorAll('.confetti, .fly-food').forEach(function (c) { c.remove(); });
+    document.querySelectorAll('.confetti, .fly-food, .tap-burst').forEach(function (c) { c.remove(); });
     setLevel(0, true);
+  }
+
+  // jump to a random spot on either side of the glass, well away from the last one
+  function moveTarget() {
+    var p, tries = 0;
+    do {
+      var z = ZONES[Math.floor(Math.random() * ZONES.length)];
+      p = { x: z.x1 + Math.random() * (z.x2 - z.x1), y: z.y1 + Math.random() * (z.y2 - z.y1) };
+      tries++;
+    } while (state.pos && Math.hypot(p.x - state.pos.x, p.y - state.pos.y) < 300 && tries < 30);
+    state.pos = p;
+    tapTarget.style.left = p.x.toFixed(0) + 'px';
+    tapTarget.style.top = p.y.toFixed(0) + 'px';
+    tapTarget.classList.remove('is-popping');
+    void tapTarget.offsetWidth;
+    tapTarget.classList.add('is-popping');
   }
 
   function setLevel(pct, instant) {
@@ -193,7 +254,7 @@
     if (instant) { milk.style.transition = 'none'; meterFill.style.transition = 'none'; }
     milk.style.transform = 'translate(0px, ' + y.toFixed(1) + 'px)';
     meterFill.style.height = (p * 100) + '%';
-    meterPct.textContent = pct + '%';
+    meterPct.textContent = Math.round(pct) + '%';
     if (instant) {
       void milk.getBoundingClientRect();
       milk.style.transition = '';
@@ -201,30 +262,41 @@
     }
   }
 
-  function onFoodTap(f, btn) {
+  tapTarget.addEventListener('pointerdown', function (e) {
+    e.preventDefault();
+    onTap();
+  });
+
+  function onTap() {
     if (state.screen !== 'game' || state.phase !== 'play') return;
     var now = performance.now();
     if (now - state.lastTap < 80) return;  // ignore double-fires from one touch
     state.lastTap = now;
     bumpIdle();
 
-    state.total = Math.min(100, state.total + f.fill);
-    state.taps[f.id] = (state.taps[f.id] || 0) + 1;
+    var add = CFG.tapFillMin + Math.random() * (CFG.tapFillMax - CFG.tapFillMin);
+    state.total = Math.min(100, state.total + add);
+    state.taps++;
     setLevel(state.total);
     slosh();
     sndPop(state.total / 100);
-    if (btn) {
-      btn.classList.remove('is-hit');
-      void btn.offsetWidth;
-      btn.classList.add('is-hit');
-      flyFood(f, btn);
-    }
+    burstAt(state.pos);
+    flyFood(state.food, state.pos);
 
     if (state.total >= 100) glassFull();
+    else moveTarget();
   }
 
-  function flyFood(f, btn) {
-    var from = stageCenter(btn.querySelector('.gfood-circle'));
+  function burstAt(p) {
+    var b = document.createElement('div');
+    b.className = 'tap-burst';
+    b.style.left = p.x + 'px';
+    b.style.top = p.y + 'px';
+    screens.game.appendChild(b);
+    setTimeout(function () { b.remove(); }, 500);
+  }
+
+  function flyFood(f, from) {
     var to = stageCenter(glassWrap);
     var el = document.createElement('div');
     el.className = 'fly-food';
@@ -258,23 +330,22 @@
 
   function glassFull() {
     state.phase = 'full';
-    gameFoods.classList.add('is-locked');
+    tapTarget.classList.add('is-locked');
+    tapTarget.style.visibility = 'hidden';
     glassPanel.classList.add('is-perfect');
     sndWin();
-    later(showSummary, CFG.fullMs);
+    later(showResult, CFG.fullMs);
   }
 
-  function showSummary() {
-    var totalTaps = 0;
-    summaryList.innerHTML = GAME_FOODS.map(function (f) {
-      var n = state.taps[f.id] || 0;
-      totalTaps += n;
-      return '<div class="summary-row' + (n ? '' : ' is-zero') + '">' +
-        '<img src="' + f.icon + '" alt="">' +
-        '<div><div class="s-count">&times;' + n + '</div>' +
-        '<div class="s-name">' + f.label + '</div></div></div>';
-    }).join('');
-    summaryTaps.textContent = totalTaps;
+  // only the chosen food, with its fact from the booth's right-wall panel
+  function showResult() {
+    var f = state.food;
+    $('#resultIcon').src = f.icon;
+    $('#resultNum').textContent = '~' + fmt(f.target);
+    $('#resultName').textContent = f.name;
+    $('#resultFact').innerHTML = f.group === 'hmb'
+      ? 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b><br>to get <b>~1.5g of HMB</b>.'
+      : 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b> to get <b>~30g of leucine</b> &mdash;<br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
     fullOverlay.classList.add('is-shown');
     confetti();
     later(playVideo, CFG.summaryMs);
@@ -345,9 +416,6 @@
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
   video.addEventListener('ended', goHome);
 
-  /* ---------------- MAIN PAGE: logo, game name, HMB line + start ---------------- */
-  startBtn.addEventListener('click', startGame);
-
   /* ---------------- reset / idle ---------------- */
   function goHome() {
     clearTimers();
@@ -355,16 +423,17 @@
     video.removeAttribute('src');
     video.load();
     resetRound();
+    resetSelect();
     show('info');
   }
 
-  // a game abandoned mid-way goes back to the main page for the next player
+  // a food choice or game abandoned mid-way goes back to the main page for the next player
   var idleTimer = null;
   function bumpIdle() {
     clearTimeout(idleTimer);
-    if (state.screen !== 'game') return;  // main page waits; video moves on by itself
+    if (state.screen !== 'select' && state.screen !== 'game') return;  // main page waits; video moves on by itself
     idleTimer = setTimeout(function () {
-      if (state.screen === 'game' && state.phase === 'play') goHome();
+      if (state.screen === 'select' || (state.screen === 'game' && state.phase === 'play')) goHome();
     }, CFG.idleResetMs);
   }
   document.addEventListener('pointerdown', bumpIdle, true);
@@ -387,21 +456,24 @@
   });
 
   // preload remaining art
-  ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png'].forEach(function (src) { new Image().src = src; });
+  ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png', 'assets/ensure-gold-logo-hd.webp'].forEach(function (src) { new Image().src = src; });
 
-  // debug helper for testing in a browser console: GAME.go('home'|'game'|'video'), GAME.tap('avocado')
+  // debug helper for testing in a browser console:
+  // GAME.go('home'|'select'|'video'), GAME.play('avocado'), GAME.tap()
   window.GAME = {
     state: state,
     bgm: bgm,
     go: function (name) {
       if (name === 'video') playVideo();
-      else if (name === 'game') startGame();
+      else if (name === 'select') showSelect();
       else goHome();
     },
-    tap: function (id) {
-      var f = GAME_FOODS.filter(function (x) { return x.id === id; })[0];
+    play: function (id) {
+      startGame(FOODS.filter(function (x) { return x.id === id; })[0] || FOODS[0]);
+    },
+    tap: function () {
       state.lastTap = -1e9;
-      if (f) onFoodTap(f);
+      onTap();
     }
   };
 

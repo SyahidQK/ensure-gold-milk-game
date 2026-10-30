@@ -14,7 +14,7 @@
       <div class="select-bg" aria-hidden="true"></div>
 
       <div class="home">
-        <div class="home-logo"><img src="assets/ensure-gold-logo.png" alt="Ensure Gold"></div>
+        <div class="home-logo"><img src="assets/ensure-gold-logo-hd.webp" alt="Ensure Gold"></div>
         <h1 class="home-title">Fill It Gold</h1>
         <p class="home-intro"><span class="gold">HMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
       </div>
@@ -22,17 +22,51 @@
       <button id="startBtn" class="start-btn">
         <span class="start-text">Press to start</span>
       </button>
+    </section>
 
-      <!-- compliance approval code (required by the client) -->
-      <div class="approval-code">Approval Code: 1. MYTH &amp; Fact Game: MY-NP-ELI-MOU-IDA-PUC-000001-10-22-2028</div>
+    <!-- ============ CHOOSE A FOOD ============ -->
+    <section id="select" class="screen" aria-label="Choose a food">
+      <div class="select-bg" aria-hidden="true"></div>
+
+      <header class="select-header">
+        <div class="select-logo"><img src="assets/ensure-gold-logo-hd.webp" alt="Ensure Gold"></div>
+        <p class="intro"><span class="gold">HMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
+        <h1 class="select-title">Choose a food to start</h1>
+      </header>
+
+      <div class="need-row">
+        <div class="need-label">One would need to eat:</div>
+        <div class="pill pill-navy"><span class="pill-ico">
+          <svg viewBox="0 0 40 40"><path d="M6 26c4-12 8-12 12 0s8 12 12 0 6-8 6-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        </span><span><b>~300g</b> of whey protein a day from foods high in leucine</span></div>
+        <div class="pill-arrow">&#9654;</div>
+        <div class="pill pill-blue"><span class="pill-ico">
+          <svg viewBox="0 0 40 40"><g fill="none" stroke="currentColor" stroke-width="3"><circle cx="8" cy="26" r="4"/><circle cx="20" cy="18" r="4"/><circle cx="32" cy="10" r="4"/><path d="M11 24l6-4M23 16l6-4"/></g></svg>
+        </span><span>In order to get <b>~30g</b> of leucine</span></div>
+        <div class="pill-arrow">&#9654;</div>
+        <div class="pill pill-gold"><span class="pill-ico pill-ico-hex">HMB</span><span>5% of this would be converted to <b>~1.5g</b> of HMB</span></div>
+      </div>
+
+      <div class="food-cards">
+        <div class="food-card">
+          <div class="card-head">Foods high in Leucine</div>
+          <div class="food-grid" data-group="leucine"></div>
+        </div>
+        <div class="food-card">
+          <div class="card-head">Foods with HMB</div>
+          <div class="food-grid" data-group="hmb"></div>
+        </div>
+      </div>
+
+      <button id="goBtn" class="start-btn" disabled>
+        <span class="start-text">Tap a food above</span>
+      </button>
     </section>
 
     <!-- ============ GAME: FILL THE GLASS ============ -->
     <section id="game" class="screen" aria-label="Fill the glass">
-      <h2 class="game-title">Tap the food buttons to fill up the glass<br>of Ensure Gold!!</h2>
-      <div class="game-rule">Keep tapping until the glass is <b>full</b>!</div>
-
-      <div id="gameFoods" class="game-foods"></div>
+      <h2 class="game-title">Tap the <span id="gameWord">food</span> to fill up the glass<br>of Ensure Gold!!</h2>
+      <div class="game-rule">Catch it! It jumps after every tap!</div>
 
       <div class="glass-panel">
         <div class="glass-wrap">
@@ -62,7 +96,6 @@
                 <rect x="0" y="10" width="300" height="440" fill="url(#milkGrad)"/>
                 <path id="milkWave" class="milk-wave" d="M-300 12 Q-262 0 -225 12 T-150 12 T-75 12 T0 12 T75 12 T150 12 T225 12 T300 12 T375 12 T450 12 T525 12 T600 12 V40 H-300 Z" fill="#fffdf7"/>
               </g>
-              <g id="splashes"></g>
             </g>
             <!-- glass outline + shine -->
             <path d="M22 18 L278 18 L258 400 Q256 414 242 414 L58 414 Q44 414 42 400 Z" fill="url(#glassShine)" stroke="rgba(255,255,255,.75)" stroke-width="5"/>
@@ -80,25 +113,36 @@
         </div>
       </div>
 
-      <!-- glass full: summary of what was tapped, then the video -->
+      <!-- the one tap target; jumps to a new random spot after every tap -->
+      <button id="tapTarget" class="tap-target" aria-label="Tap">
+        <span class="tap-circle"><img id="tapIcon" src="" alt=""></span>
+        <span class="tap-badge">TAP!</span>
+      </button>
+
+      <!-- glass full: the chosen food and its fact, then the video -->
       <div id="fullOverlay" class="full-overlay" aria-live="polite">
-        <div class="full-card summary-card">
+        <div class="full-card result-card">
           <div class="full-burst" aria-hidden="true"></div>
           <div class="full-title">Glass full!</div>
-          <div class="summary-sub">Here&rsquo;s what it took to fill your glass:</div>
-          <div id="summaryList" class="summary-list"></div>
-          <div class="summary-total"><b><span id="summaryTaps">0</span> taps</b> to fill one glass</div>
+          <div class="result-food">
+            <img id="resultIcon" src="" alt="">
+            <div>
+              <div id="resultNum" class="result-num">~3,000</div>
+              <div id="resultName" class="result-name">Avocados</div>
+            </div>
+          </div>
+          <div id="resultFact" class="result-fact"></div>
           <div class="summary-note">Getting enough <b>HMB</b> from food alone is very difficult &mdash; <b>Ensure Gold</b> has it in one glass.</div>
           <button id="summaryNext" class="summary-next">Watch the video &#9654;</button>
         </div>
       </div>
     </section>
 
-    <!-- ============ SCREEN 3: HMB VIDEO ============ -->
+    <!-- ============ HMB VIDEO ============ -->
     <section id="video" class="screen" aria-label="HMB video">
       <video id="hmbVideo" playsinline preload="auto"></video>
       <div id="videoPlaceholder" class="video-placeholder">
-        <img src="assets/ensure-gold-logo.png" alt="Ensure Gold" class="vp-logo">
+        <img src="assets/ensure-gold-logo-hd.webp" alt="Ensure Gold" class="vp-logo">
         <div class="vp-title">HMB Video</div>
         <div class="vp-sub">Coming soon</div>
         <div class="vp-count">Back to start in <span id="vpCount">6</span>s</div>

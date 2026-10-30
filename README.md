@@ -5,13 +5,15 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
 ## Flow
 1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "HMB is found in small amounts
    in some foods…", and **Press to start**. The game only starts from that button.
-2. **Fill the glass** – 6 foods around the glass. Each tap adds a hidden amount:
-   Avocado 1%, Asparagus 2%, Catfish 3%, Eggs 4%, Beef Steak 5%, Chicken 6%.
-   Mixing foods takes about 23–35 taps. The glass stops at 100% and the round ends — no overflow, no timer.
-3. **Glass full!** – summary of how many times each food was tapped (auto-continues after 9 s, or tap "Watch the video").
-4. **HMB video** (background music muted) → back to the main page.
+2. **Choose a food to start** – the HMB info pills and the 8 foods in two cards (Foods high in Leucine / Foods with HMB).
+   Amounts are hidden here. Tap a food, then **Start**.
+3. **Fill the glass** – one "TAP!" target showing the chosen food. Every tap fills 3–6% of the glass and the target
+   jumps to a new random spot on either side of the glass (at least 300 px away). About 21–25 taps to fill.
+4. **Glass full!** – only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
+   to get ~1.5g of HMB" (auto-continues after 10 s, or tap "Watch the video").
+5. **HMB video** (background music muted) → back to the main page.
 
-A game left untouched for 60 s goes back to the main page for the next player.
+A food choice or game left untouched for 60 s goes back to the main page for the next player.
 
 ## Run at the booth
 Recommended (local server, so the video can seek):
@@ -40,13 +42,17 @@ Chrome only plays sound on its own when launched with `--autoplay-policy=no-user
 
 ## Changing content / tuning
 Everything is in `js/foods.js`:
-- `FOODS` – names, target numbers, icons, `fill` (% per tap — lower = slower to fill), `slot` (position around the glass), `label` (short game name).
-- `GAME_CONFIG` – idle reset (60 s), summary time, info page time, video path, sound on/off, BGM start point / volume / fade
+- `FOODS` – names, amounts (shown only on the result card), icons, `word` (used in the game title), `label` (the "+1 ___" pop-up).
+- `GAME_CONFIG` – fill per tap (`tapFillMin`/`tapFillMax`), idle reset (60 s), result card time, video path, sound on/off, BGM start point / volume / fade
+
+## Font
+All text uses **Chewy** (`assets/fonts/Chewy-Regular.ttf`), bundled with the game, so nothing needs installing on the booth PC.
 
 ## Assets
+- `assets/ensure-gold-logo-hd.webp` – official Ensure Gold logo (transparent), used on the main page, food screen and video screen
 - `assets/icons/*.png` – cropped from the PDF game mockup (`tools/crop-assets.js`; needs `npm i jpeg-js pngjs` to re-run)
 - `assets/icons/soybeans.svg`, `cauliflower.svg` – drawn to match (not in the mockup)
-- `assets/ensure-gold-logo.png` – cropped from the mockup glass; **replace with the client's official logo PNG when available**
+- `assets/ensure-gold-logo.png` – cropped from the mockup glass; still used for the logo printed on the glass in the game
 - `assets/bg-farm.svg` – farm background
 - `assets/source/` – original images extracted from `HMB Booth.pdf` (`tools/extract-pdf-images.js`)
 
