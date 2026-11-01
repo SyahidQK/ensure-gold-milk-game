@@ -39,11 +39,16 @@
   };
 
   var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
-  // amounts of a food: one decimal for small targets (e.g. 3.4 of ~7 chicken breasts), whole numbers otherwise
-  function amt(n, target) {
-    if (target >= 100) return fmt(n);
-    var r = Math.round(n * 10) / 10;
-    return r % 1 === 0 ? String(r) : r.toFixed(1);
+  // an amount of food f: one decimal for small targets (e.g. 3.4 of ~7), whole numbers otherwise,
+  // plus the food's unit if it has one (e.g. 'g' → "3.4g")
+  function amt(n, f) {
+    var s;
+    if (f.target >= 100) s = fmt(n);
+    else {
+      var r = Math.round(n * 10) / 10;
+      s = r % 1 === 0 ? String(r) : r.toFixed(1);
+    }
+    return s + (f.unit || '');
   }
 
   /* ---------------- stage scaling ---------------- */
@@ -222,9 +227,9 @@
     gameWord.textContent = f.word;
     tapIcon.src = f.icon;
     $('#countIcon').src = f.icon;
-    $('#countTarget').textContent = '~' + amt(f.target, f.target);
+    $('#countTarget').textContent = '~' + amt(f.target, f);
     $('#countUnit').textContent = f.name;
-    countNow.textContent = '0';
+    countNow.textContent = amt(0, f);
     state.pos = null;
     moveTarget();
     show('game');
@@ -236,6 +241,7 @@
     state.total = 0;
     state.taps = 0;
     cancelAnimationFrame(countTween);
+    clearTimeout(countSettle);
     countNow.textContent = '0';
     tapTarget.classList.remove('is-locked');
     tapTarget.style.visibility = '';
@@ -309,16 +315,23 @@
   // live count of the chosen food, e.g. "1,245 / ~3,000 Avocados"
   var countNow = $('#countNow');
   var countTween = null;
+  var countSettle = null;
   function countTo(from, to) {
-    var target = state.food.target;
+    var f = state.food;
     var t0 = performance.now();
     cancelAnimationFrame(countTween);
+    clearTimeout(countSettle);
     (function step(now) {
       var k = Math.min(1, (now - t0) / 350);
       var v = from + (to - from) * (1 - Math.pow(1 - k, 3));
-      countNow.textContent = amt(k < 1 ? v : to, target);
+      countNow.textContent = amt(k < 1 ? v : to, f);
       if (k < 1) countTween = requestAnimationFrame(step);
     })(t0);
+    // animation frames can pause (e.g. hidden window); always land on the final number
+    countSettle = setTimeout(function () {
+      cancelAnimationFrame(countTween);
+      if (state.food === f) countNow.textContent = amt(to, f);
+    }, 400);
     countNow.classList.remove('bump');
     void countNow.offsetWidth;
     countNow.classList.add('bump');
@@ -353,7 +366,7 @@
 
     var plus = document.createElement('div');
     plus.className = 'plus';
-    plus.textContent = '+' + amt(added, f.target);
+    plus.textContent = '+' + amt(added, f);
     glassWrap.querySelector('.fly-layer').appendChild(plus);
     setTimeout(function () { plus.remove(); }, 950);
   }
@@ -419,11 +432,11 @@
   function showResult() {
     var f = state.food;
     $('#resultIcon').src = f.icon;
-    $('#resultNum').textContent = '~' + fmt(f.target);
+    $('#resultNum').textContent = '~' + amt(f.target, f);
     $('#resultName').textContent = f.name;
     $('#resultFact').innerHTML = f.group === 'hmb'
-      ? 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b><br>to get <b>~1.5g of HMB</b>.'
-      : 'You would need to eat <b>~' + fmt(f.target) + ' ' + f.name + '</b> to get <b>~30g of leucine</b><br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
+      ? 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b><br>to get <b>~1.5g of HMB</b>.'
+      : 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b> to get <b>~30g of leucine</b><br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
     fullOverlay.classList.add('is-shown');
     confetti();
     later(playVideo, CFG.summaryMs);
