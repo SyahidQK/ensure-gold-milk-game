@@ -435,8 +435,8 @@
     $('#resultNum').textContent = '~' + amt(f.target, f);
     $('#resultName').textContent = f.name;
     $('#resultFact').innerHTML = f.group === 'hmb'
-      ? 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b><br>to get <b>~1.5g of HMB</b>.'
-      : 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b> to get <b>~30g of leucine</b><br>and only 5% of it is converted to <b>~1.5g of HMB</b>.';
+      ? 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b><br>to get <b>~1.5g of CaHMB</b>.'
+      : 'You would need to eat <b>~' + amt(f.target, f) + (f.unit ? ' of ' : ' ') + f.name + '</b> to get <b>~30g of leucine</b><br>and only 5% of it is converted to <b>~1.5g of CaHMB</b>.';
     fullOverlay.classList.add('is-shown');
     confetti();
     later(playVideo, CFG.summaryMs);
@@ -459,7 +459,7 @@
     }
   }
 
-  /* ---------------- HMB video ---------------- */
+  /* ---------------- CaHMB video ---------------- */
   var videoWatch = null;
   function playVideo() {
     clearTimers();

@@ -1,19 +1,19 @@
-# Fill It Gold – Ensure Gold HMB booth touch-TV game
+# Fill It Gold – Ensure Gold CaHMB booth touch-TV game
 
 Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no internet needed.
 
 ## Flow
-1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "HMB is found in small amounts
+1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "CaHMB is found in small amounts
    in some foods…", and **Press to start**. The game only starts from that button.
-2. **Choose a food to start** – the HMB intro line and the 8 foods in two cards (Foods high in Leucine / Foods with HMB).
+2. **Choose a food to start** – the CaHMB intro line and the 8 foods in two cards (Foods high in Leucine / Foods with CaHMB).
    Amounts are hidden here. Tap a food, then **Start**.
 3. **Fill the glass** – the glass is full when the player reaches the chosen food's amount (e.g. ~7 chicken breasts,
    ~3,000 avocados). A counter under the title shows it live, e.g. "1,137 / ~3,000 Servings of Cooked Asparagus".
    One "TAP!" target shows the food; every tap adds a random 4–8% of the amount (0.3–0.6 chicken breasts,
    120–240 avocados…) and the target jumps to a new random spot beside the glass. Every food takes 15–20 taps.
 4. **Glass full!** – the glass shakes hard (~1 s), then glows gold with a flash and a particle burst; then a card with only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
-   to get ~1.5g of HMB" (auto-continues after 10 s, or tap "Watch the video").
-5. **HMB video** (background music muted) → back to the main page.
+   to get ~1.5g of CaHMB" (auto-continues after 10 s, or tap "Watch the video").
+5. **CaHMB video** (background music muted) → back to the main page.
 
 A food choice or game left untouched for 60 s goes back to the main page for the next player.
 
@@ -34,9 +34,9 @@ Opening `index.html` straight from disk also works in Chrome.
 
 Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-right corner** for 3 seconds.
 
-## Adding the client HMB video
+## Adding the client CaHMB video
 Drop the file at `assets/video/hmb.mp4` (H.264 MP4, 1920×1080). Nothing else to change.
-Until it exists, a "HMB Video – Coming soon" screen shows for 6 seconds instead.
+Until it exists, a "CaHMB Video – Coming soon" screen shows for 6 seconds instead.
 
 ## Background music
 `assets/audio/bgm.mp3` plays from 0:09 and loops back to 0:09 when it ends. It fades out while the video screen is showing and fades back in afterwards.

@@ -71,6 +71,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 
 .gold { color: var(--gold-light); }
+/* brand terms like "CaHMB" keep their casing inside UPPERCASE headings */
+.keep-case { text-transform: none; }
 
 /* HD logo: the artwork sits in a 1268x648 area of a 2000x1024 transparent image; crop to it */
 .home-logo, .select-logo {
@@ -87,7 +89,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 }
 
 /* =================================================================
-   MAIN PAGE – logo, game name, HMB line + START
+   MAIN PAGE – logo, game name, CaHMB line + START
    ================================================================= */
 #info, #select {
   background:
