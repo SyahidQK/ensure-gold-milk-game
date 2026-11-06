@@ -13,7 +13,7 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
    120–240 avocados…) and the target jumps to a new random spot beside the glass. Every food takes 15–20 taps.
 4. **Glass full!** – the glass shakes hard (~1 s), then glows gold with a flash and a particle burst; then a card with only the chosen food with its fact, e.g. "~3,000 Avocados — you would need to eat ~3,000 Avocados
    to get ~1.5g of CaHMB" (auto-continues after 10 s, or tap "Watch the video").
-5. **CaHMB video** (background music muted; **Skip** button bottom-right) → back to the main page.
+5. **CaHMB video** (background music muted; **Skip** button top-right) → back to the main page.
 
 A food choice or game left untouched for 60 s goes back to the main page for the next player.
 
@@ -32,7 +32,7 @@ Then open Chrome in kiosk mode:
 
 Opening `index.html` straight from disk also works in Chrome.
 
-Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-right corner** for 3 seconds.
+Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 seconds.
 
 ## CaHMB video
 `assets/video/hmb.mp4` is the client's "Ensure Armour (HMB & YBG) MOA Video" (2:06, 1920×1080, 25 fps).

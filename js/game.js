@@ -539,7 +539,7 @@
   document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
   document.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
 
-  // long-press the top-right corner for 3s → full reload
+  // long-press the top-left corner for 3s → full reload
   var adminHold = null;
   var corner = $('#adminCorner');
   corner.addEventListener('pointerdown', function () {
