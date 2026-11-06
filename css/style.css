@@ -91,20 +91,28 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* =================================================================
    MAIN PAGE – logo, game name, CaHMB line + START
    ================================================================= */
-#info, #select {
-  background:
-    radial-gradient(1200px 700px at 50% 0%, #17398f 0%, transparent 70%),
-    radial-gradient(900px 600px at 100% 100%, #10307d 0%, transparent 70%),
-    linear-gradient(180deg, var(--navy-800), var(--navy-900));
-}
-.select-bg {
+/* main page redesign (from ensure_gold_dynamic_ui_redesign.html, rebuilt offline without Tailwind);
+   the choose-a-food page shares the same animated background */
+#info, #select { background: #030a1c; }
+.home-canvas {
   position: absolute;
   inset: 0;
-  opacity: .22;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='104' viewBox='0 0 120 104'%3E%3Cpath d='M30 2 L90 2 L118 52 L90 102 L30 102 L2 52 Z' fill='none' stroke='%236fb7ff' stroke-width='1.5'/%3E%3C/svg%3E");
-  background-size: 120px 104px;
-  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, transparent 30%, #000 85%);
-  mask-image: radial-gradient(ellipse at 50% 50%, transparent 30%, #000 85%);
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.home-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 40%, rgba(3,10,28,.6) 80%, rgba(2,6,18,.95) 100%);
+}
+.home-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 8px solid rgba(251,191,36,.2);
+  border-radius: 18px;
 }
 
 .home {
@@ -116,23 +124,102 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   flex-direction: column;
   align-items: center;
   text-align: center;
+  pointer-events: none;
 }
-.home-logo { width: 620px; }
+.home-logo { width: 560px; }
+.home-logo img { filter: drop-shadow(0 8px 16px rgba(0,0,0,.8)); }
 .home-title {
-  margin-top: 26px;
-  font-size: 170px;
-  line-height: 1;
-  color: var(--cream);
-  text-shadow: 0 7px 0 var(--gold-dark), 0 14px 34px rgba(0,0,0,.5);
-  letter-spacing: 2px;
-}
-.home-intro {
   margin-top: 34px;
-  width: 1300px;
-  font-size: 42px;
-  line-height: 1.3;
-  color: #d8e4ff;
+  font-size: 160px;
+  line-height: 1;
+  letter-spacing: 3px;
+  /* gold gradient text */
+  background: linear-gradient(180deg, #ffffff 0%, #fff2a1 30%, #f5c518 70%, #cf9a0a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,.8)) drop-shadow(0 0 25px rgba(245,197,24,.5));
+}
+/* frosted description box */
+.home-desc {
+  margin-top: 44px;
+  width: 1180px;
+  padding: 30px 46px;
+  border-radius: 28px;
+  background: rgba(23,37,84,.6);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(251,191,36,.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+.home-desc p {
+  font-size: 40px;
+  line-height: 1.45;
+  color: #eff6ff;
   letter-spacing: .5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,.9);
+}
+.home-desc .gold { color: #fcd34d; }
+
+/* metallic gold start button with a pulsing glow ring */
+.home-start {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+}
+.home-start-pulse {
+  position: absolute;
+  inset: -18px;
+  border-radius: 999px;
+  background: rgba(251,191,36,.3);
+  filter: blur(12px);
+  pointer-events: none;
+  animation: pulseRing 2.5s ease-in-out infinite;
+}
+@keyframes pulseRing {
+  0%, 100% { transform: scale(.98); opacity: .8; }
+  50%      { transform: scale(1.06); opacity: .3; }
+}
+.btn-gold {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 26px 76px;
+  border-radius: 999px;
+  color: #020617;
+  font-size: 52px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffe885 0%, #f7c844 40%, #d99b00 80%, #b37d00 100%);
+  box-shadow:
+    0 0 0 4px rgba(255,223,110,.6),
+    0 14px 34px -6px rgba(0,0,0,.7),
+    0 0 40px rgba(247,200,68,.4),
+    inset 0 3px 5px rgba(255,255,255,.8),
+    inset 0 -4px 8px rgba(0,0,0,.4);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-gold:active {
+  transform: scale(.96);
+  box-shadow:
+    0 0 0 4px rgba(255,223,110,.8),
+    0 6px 18px -3px rgba(0,0,0,.8),
+    0 0 50px rgba(247,200,68,.7),
+    inset 0 3px 5px rgba(255,255,255,.6),
+    inset 0 -3px 5px rgba(0,0,0,.6);
+}
+.home-start-play {
+  width: 44px;
+  height: 44px;
+  fill: #020617;
+  animation: playBounce 1s infinite;
+}
+@keyframes playBounce {
+  0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(.8,0,1,1); }
+  50%      { transform: translateY(0);    animation-timing-function: cubic-bezier(0,0,.2,1); }
 }
 
 .start-btn {
@@ -289,6 +376,153 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
    ================================================================= */
 #game {
   background: url('../assets/bg-farm.svg') center / cover no-repeat, #8fd0f6;
+}
+
+/* ---- animated farm background layers (behind every game element, never touchable) ----
+   Everything moves with transform only, so the GPU composites it without repainting. */
+.farm-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;   /* own stacking layer: cows' depth z-indexes stay inside it, below every game element */
+  overflow: hidden;
+  pointer-events: none;
+}
+.farm-bg img { position: absolute; display: block; }
+/* foreground scenery always in front of the cows (cows use z-index ≈ their y, 795–960) */
+.farm-bg .banana, .farm-bg .bush, .farm-bg .grass { z-index: 2000; }
+.farm-bg .butterfly { z-index: 2100; }
+
+.cloud { left: 0; will-change: transform; animation: drift linear infinite; opacity: .95; }
+.cloud-1 { top: 40px;  width: 300px; animation-duration: 150s; animation-delay: -20s; }
+.cloud-2 { top: 120px; width: 220px; animation-duration: 120s; animation-delay: -75s; opacity: .85; }
+.cloud-3 { top: 200px; width: 260px; animation-duration: 175s; animation-delay: -120s; }
+.cloud-4 { top: 70px;  width: 180px; animation-duration: 135s; animation-delay: -40s; opacity: .8; }
+@keyframes drift {
+  from { transform: translateX(-420px); }
+  to   { transform: translateX(2340px); }
+}
+
+/* banana trees frame both edges and sway from the ground (trunk base = 51% across the image) */
+.banana { width: 520px; bottom: 30px; transform-origin: 51% 100%; will-change: transform; }
+.banana-l { left: -200px; animation: swayL 5.5s ease-in-out infinite alternate; }
+.banana-r { right: -200px; width: 440px; animation: swayR 6.2s ease-in-out infinite alternate; }
+@keyframes swayL {
+  from { transform: rotate(-1.6deg); }
+  to   { transform: rotate(1.4deg); }
+}
+@keyframes swayR {
+  from { transform: scaleX(-1) rotate(-1.4deg); }
+  to   { transform: scaleX(-1) rotate(1.6deg); }
+}
+
+.bush { width: 400px; bottom: -14px; }
+.bush-l { left: -60px; }
+.bush-r { right: -60px; transform: scaleX(-1); }
+
+.grass {
+  left: -20px;
+  bottom: -6px;
+  width: 1960px;
+  height: 96px;
+  transform-origin: 50% 100%;
+  will-change: transform;
+  animation: grassSway 3.6s ease-in-out infinite alternate;
+}
+@keyframes grassSway {
+  from { transform: skewX(-3deg); }
+  to   { transform: skewX(3deg); }
+}
+
+/* dairy cows (js/farm-cows.js): graze ~1 min, walk to a new spot, graze again.
+   Each .farm-cow is anchored at its feet; JS sets translate(x, y) scale(s). */
+.farm-cows { position: absolute; inset: 0; }
+.farm-cow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: -105px 0 0 -100px;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+.cow-flip { transform-origin: 50% 100%; transition: transform .6s ease-in-out; }
+.cow-flip.is-left { transform: scaleX(-1); }
+.cow-svg { display: block; width: 100%; overflow: visible; }
+.cow-svg g { transform-box: view-box; }
+
+.cow-tail { transform-origin: -88px -78px; animation: tailSwish 2.4s ease-in-out infinite alternate; }
+@keyframes tailSwish {
+  from { transform: rotate(-12deg); }
+  to   { transform: rotate(10deg); }
+}
+
+/* grazing: head down, nibbling; walking: head comes up */
+.cow-head-lift { transform-origin: 70px -82px; transition: transform .7s ease; }
+.cow-head-chew {
+  transform-origin: 70px -82px;
+  animation: chew 1.3s ease-in-out infinite alternate;
+  animation-delay: var(--chew-delay, 0s);
+}
+@keyframes chew {
+  0%   { transform: rotate(0deg); }
+  60%  { transform: rotate(-4deg); }
+  100% { transform: rotate(2deg); }
+}
+.cow-grass { transition: opacity .3s ease; }
+.farm-cow.is-walking .cow-head-lift { transform: rotate(-38deg); }
+.farm-cow.is-walking .cow-head-chew { animation: none; }
+.farm-cow.is-walking .cow-grass { opacity: 0; }
+
+/* walking: diagonal leg pairs swing, body bobs */
+.leg-b1 { transform-origin: -62px -42px; }
+.leg-b2 { transform-origin: -40px -42px; }
+.leg-f1 { transform-origin: 38px -42px; }
+.leg-f2 { transform-origin: 60px -42px; }
+.farm-cow.is-walking .leg-b1,
+.farm-cow.is-walking .leg-f2 { animation: stepA .55s ease-in-out infinite alternate; }
+.farm-cow.is-walking .leg-b2,
+.farm-cow.is-walking .leg-f1 { animation: stepB .55s ease-in-out infinite alternate; }
+.farm-cow.is-walking .cow-bob { animation: cowBob .275s ease-in-out infinite alternate; }
+@keyframes stepA { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+@keyframes stepB { from { transform: rotate(14deg); } to { transform: rotate(-14deg); } }
+@keyframes cowBob { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+
+/* butterflies cross the meadow now and then, then rest off-screen */
+.butterfly {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 56px;
+  will-change: transform, opacity;
+}
+.butterfly img { position: static; width: 100%; animation: bob 1.2s ease-in-out infinite alternate; }
+.butterfly-1 { animation: flyRight 28s linear infinite; animation-delay: -4s; }
+.butterfly-2 { width: 46px; animation: flyLeft 34s linear infinite; animation-delay: -21s; }
+@keyframes bob {
+  from { transform: translateY(-6px) rotate(-8deg); }
+  to   { transform: translateY(6px) rotate(8deg); }
+}
+@keyframes flyRight {
+  0%   { transform: translate(-80px, 560px); opacity: 1; }
+  10%  { transform: translate(180px, 470px); }
+  20%  { transform: translate(380px, 540px); }
+  30%  { transform: translate(560px, 420px); }
+  40%  { transform: translate(900px, 470px); }
+  50%  { transform: translate(1250px, 400px); }
+  60%  { transform: translate(1480px, 500px); }
+  70%  { transform: translate(1700px, 430px); }
+  79%  { transform: translate(2000px, 480px); opacity: 1; }
+  80%, 100% { transform: translate(2000px, 480px); opacity: 0; }
+}
+@keyframes flyLeft {
+  0%   { transform: translate(2000px, 640px) scaleX(-1); opacity: 1; }
+  12%  { transform: translate(1760px, 560px) scaleX(-1); }
+  24%  { transform: translate(1560px, 650px) scaleX(-1); }
+  36%  { transform: translate(1100px, 560px) scaleX(-1); }
+  48%  { transform: translate(700px, 620px) scaleX(-1); }
+  60%  { transform: translate(380px, 540px) scaleX(-1); }
+  70%  { transform: translate(140px, 610px) scaleX(-1); }
+  79%  { transform: translate(-90px, 560px) scaleX(-1); opacity: 1; }
+  80%, 100% { transform: translate(-90px, 560px) scaleX(-1); opacity: 0; }
 }
 
 .game-title {

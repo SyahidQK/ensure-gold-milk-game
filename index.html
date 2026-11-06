@@ -11,22 +11,34 @@
 
     <!-- ============ MAIN PAGE: logo, game name, CaHMB line + START ============ -->
     <section id="info" class="screen is-active" aria-label="Fill It Gold">
-      <div class="select-bg" aria-hidden="true"></div>
+      <!-- animated background: grid, energy lights, golden soybeans, touch ripples (js/home-bg.js) -->
+      <canvas id="homeCanvas" class="home-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
+      <div class="home-vignette" aria-hidden="true"></div>
+      <div class="home-frame" aria-hidden="true"></div>
 
       <div class="home">
         <div class="home-logo"><img src="assets/ensure-gold-logo-hd.webp" alt="Ensure Gold"></div>
         <h1 class="home-title">Fill It Gold</h1>
-        <p class="home-intro"><span class="gold">CaHMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
+        <div class="home-desc">
+          <p><span class="gold">CaHMB</span> is found in small amounts in some foods but it is very difficult to get such significant amounts from diet alone.</p>
+        </div>
       </div>
 
-      <button id="startBtn" class="start-btn">
-        <span class="start-text">Press to start</span>
-      </button>
+      <div class="home-start">
+        <div class="home-start-pulse" aria-hidden="true"></div>
+        <button id="startBtn" class="btn-gold">
+          <svg class="home-start-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          <span>Press to start</span>
+        </button>
+      </div>
     </section>
 
     <!-- ============ CHOOSE A FOOD ============ -->
     <section id="select" class="screen" aria-label="Choose a food">
-      <div class="select-bg" aria-hidden="true"></div>
+      <!-- same animated background as the main page (js/home-bg.js) -->
+      <canvas class="home-canvas" width="1920" height="1080" aria-hidden="true"></canvas>
+      <div class="home-vignette" aria-hidden="true"></div>
+      <div class="home-frame" aria-hidden="true"></div>
 
       <header class="select-header">
         <div class="select-logo"><img src="assets/ensure-gold-logo-hd.webp" alt="Ensure Gold"></div>
@@ -52,6 +64,23 @@
 
     <!-- ============ GAME: FILL THE GLASS ============ -->
     <section id="game" class="screen" aria-label="Fill the glass">
+      <!-- animated Malaysian farm background (static scene is #game's background: assets/bg-farm.svg);
+           purely decorative, sits behind all game UI and ignores touches -->
+      <div class="farm-bg" aria-hidden="true">
+        <img class="cloud cloud-1" src="assets/bg/cloud.svg" alt="">
+        <img class="cloud cloud-2" src="assets/bg/cloud.svg" alt="">
+        <img class="cloud cloud-3" src="assets/bg/cloud.svg" alt="">
+        <img class="cloud cloud-4" src="assets/bg/cloud.svg" alt="">
+        <div class="butterfly butterfly-1"><img src="assets/bg/butterfly.svg" alt=""></div>
+        <div class="butterfly butterfly-2"><img src="assets/bg/butterfly.svg" alt=""></div>
+        <div class="farm-cows"></div><!-- filled by js/farm-cows.js -->
+        <img class="banana banana-l" src="assets/bg/banana-tree.svg" alt="">
+        <img class="banana banana-r" src="assets/bg/banana-tree.svg" alt="">
+        <img class="bush bush-l" src="assets/bg/hibiscus-bush.svg" alt="">
+        <img class="bush bush-r" src="assets/bg/hibiscus-bush.svg" alt="">
+        <img class="grass" src="assets/bg/grass.svg" alt="">
+      </div>
+
       <h2 class="game-title">Tap the <span id="gameWord">food</span> to fill up the glass<br>of Ensure Gold!!</h2>
       <!-- live count of the chosen food toward the amount that fills one glass -->
       <div class="game-count">
@@ -150,5 +179,7 @@
 
   <script src="js/foods.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/farm-cows.js"></script>
+  <script src="js/home-bg.js"></script>
 </body>
 </html>

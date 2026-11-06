@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 420 240">
+  <!-- lush bush with red hibiscus flowers; bottom edge sits on the ground -->
+  <defs>
+    <g id="h">
+      <g fill="#e53935">
+        <ellipse cx="0" cy="-15" rx="11" ry="15"/>
+        <ellipse cx="0" cy="-15" rx="11" ry="15" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-15" rx="11" ry="15" transform="rotate(144)"/>
+        <ellipse cx="0" cy="-15" rx="11" ry="15" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-15" rx="11" ry="15" transform="rotate(288)"/>
+      </g>
+      <circle r="7" fill="#9e1b1b"/>
+      <path d="M0 0 L10 -16" stroke="#ffd54f" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="11" cy="-18" r="3.5" fill="#ffd54f"/>
+    </g>
+    <g id="lf">
+      <path d="M0 0 C12 -18 34 -22 50 -12 C34 0 14 6 0 0Z" fill="#2f8f3a"/>
+      <path d="M0 0 C16 -8 32 -12 50 -12" stroke="#1f6d29" stroke-width="2" fill="none"/>
+    </g>
+  </defs>
+  <g fill="#2e7d32">
+    <circle cx="70" cy="190" r="70"/>
+    <circle cx="170" cy="150" r="90"/>
+    <circle cx="280" cy="170" r="80"/>
+    <circle cx="360" cy="200" r="60"/>
+    <rect x="0" y="190" width="420" height="50"/>
+  </g>
+  <g fill="#43a047">
+    <circle cx="110" cy="160" r="50"/>
+    <circle cx="200" cy="120" r="56"/>
+    <circle cx="300" cy="150" r="48"/>
+  </g>
+  <g>
+    <use href="#lf" xlink:href="#lf" transform="translate(60 140) rotate(-30)"/>
+    <use href="#lf" xlink:href="#lf" transform="translate(140 100) rotate(-60)"/>
+    <use href="#lf" xlink:href="#lf" transform="translate(250 96) rotate(-10)"/>
+    <use href="#lf" xlink:href="#lf" transform="translate(330 140) rotate(20)"/>
+    <use href="#lf" xlink:href="#lf" transform="translate(220 170) rotate(160)"/>
+  </g>
+  <use href="#h" xlink:href="#h" transform="translate(110 130) scale(1.1)"/>
+  <use href="#h" xlink:href="#h" transform="translate(200 90) scale(1.25) rotate(20)"/>
+  <use href="#h" xlink:href="#h" transform="translate(290 128) scale(1.05) rotate(-15)"/>
+  <use href="#h" xlink:href="#h" transform="translate(170 180) scale(.95) rotate(40)"/>
+  <use href="#h" xlink:href="#h" transform="translate(350 180) scale(.9)"/>
+  <use href="#h" xlink:href="#h" transform="translate(60 196) scale(.85) rotate(-30)"/>
+</svg>

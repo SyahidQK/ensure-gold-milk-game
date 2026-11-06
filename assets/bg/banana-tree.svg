@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-80 0 560 700">
+  <!-- tropical banana tree; trunk base at (205, 700) so it sways from the ground -->
+  <defs>
+    <linearGradient id="trunk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6f8a3a"/>
+      <stop offset=".5" stop-color="#93ab4c"/>
+      <stop offset="1" stop-color="#5f7a30"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3f9d48"/>
+      <stop offset="1" stop-color="#6cc95f"/>
+    </linearGradient>
+    <g id="bl">
+      <path d="M0 0 C60 -46 180 -58 262 -24 C206 4 84 24 0 0 Z" fill="url(#leaf)"/>
+      <path d="M0 0 C90 -22 180 -34 262 -24" stroke="#2e7d32" stroke-width="4" fill="none"/>
+      <path d="M120 -36 L132 -8 M170 -40 L178 -10 M210 -36 L214 -14" stroke="#2f8a3a" stroke-width="2.5" opacity=".7"/>
+    </g>
+  </defs>
+  <!-- trunk -->
+  <path d="M184 700 C188 560 192 420 197 300 L215 300 C220 420 224 560 228 700 Z" fill="url(#trunk)"/>
+  <g stroke="#5a7029" stroke-width="2" opacity=".55">
+    <path d="M190 640 L224 630 M192 560 L222 550 M194 480 L220 470 M196 400 L218 390 M198 340 L216 332"/>
+  </g>
+  <!-- leaves -->
+  <g transform="translate(206 302)">
+    <use href="#bl" xlink:href="#bl" transform="rotate(32) scale(.9)"/>
+    <use href="#bl" xlink:href="#bl" transform="scale(-1 1) rotate(34) scale(.9)"/>
+    <use href="#bl" xlink:href="#bl" transform="rotate(-8)"/>
+    <use href="#bl" xlink:href="#bl" transform="scale(-1 1) rotate(-6)"/>
+    <use href="#bl" xlink:href="#bl" transform="rotate(-48) scale(.95)"/>
+    <use href="#bl" xlink:href="#bl" transform="scale(-1 1) rotate(-52) scale(.95)"/>
+    <use href="#bl" xlink:href="#bl" transform="rotate(-82) scale(.8)"/>
+  </g>
+  <!-- banana bunch and heart -->
+  <path d="M204 312 C202 340 198 362 196 392" stroke="#6f8a3a" stroke-width="6" fill="none"/>
+  <g fill="#c5d84a" stroke="#93a634" stroke-width="2">
+    <path d="M182 340 C170 350 168 366 176 374 C178 360 184 350 196 346 Z"/>
+    <path d="M214 342 C226 352 228 368 220 376 C218 362 212 352 200 348 Z"/>
+    <path d="M180 362 C168 372 166 388 174 396 C176 382 182 372 194 368 Z"/>
+    <path d="M216 364 C228 374 230 390 222 398 C220 384 214 374 202 370 Z"/>
+  </g>
+  <ellipse cx="195" cy="414" rx="13" ry="22" fill="#7b2d5a"/>
+  <path d="M188 400 C194 408 196 420 194 432" stroke="#a54a7d" stroke-width="3" fill="none"/>
+</svg>

@@ -3,8 +3,12 @@
 Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no internet needed.
 
 ## Flow
-1. **Main page** – Ensure Gold logo, the game name "Fill It Gold", the line "CaHMB is found in small amounts
-   in some foods…", and **Press to start**. The game only starts from that button.
+1. **Main page** – Ensure Gold logo, the gold-gradient game name "Fill It Gold", the line "CaHMB is found in small
+   amounts in some foods…" in a frosted box, and a metallic gold **Press to start** button with a pulsing glow.
+   Animated background (`js/home-bg.js`, a canvas): moving blue grid with a gold light sweep, rising lights, floating
+   golden soybeans, and a gold ripple wherever the screen is touched. The choose-a-food page shares the same
+   background; it only runs while one of those two pages is showing.
+   The game only starts from the button.
 2. **Choose a food to start** – the CaHMB intro line and the 8 foods in two cards (Foods high in Leucine / Foods with CaHMB).
    Amounts are hidden here. Tap a food, then **Start**.
 3. **Fill the glass** – the glass is full when the player reaches the chosen food's amount (e.g. ~7 chicken breasts,
@@ -69,7 +73,15 @@ All text uses **Chewy** (`assets/fonts/Chewy-Regular.ttf`), bundled with the gam
 - `assets/icons/*.png` – cropped from the PDF game mockup (`tools/crop-assets.js`; needs `npm i jpeg-js pngjs` to re-run)
 - `assets/icons/soybeans.svg`, `cauliflower.svg` – drawn to match (not in the mockup)
 - `assets/ensure-gold-logo.png` – cropped from the mockup glass; still used for the logo printed on the glass in the game
-- `assets/bg-farm.svg` – farm background
+- `assets/bg-farm.svg` – game-screen background, Malaysian dairy farm: sky and sun, misty Cameron Highlands ridges with tea
+  terraces, hazy city skyline, white fences, hay bales and a kampung house on stilts (static)
+- `assets/bg/` – animated layers drawn on top of it, behind all game UI (`.farm-bg` in `index.html`, styles in
+  `css/style.css`): drifting clouds, swaying banana trees and grass, hibiscus bushes, and two butterflies that cross
+  now and then. All motion is transform-only (GPU-composited) and the layer ignores touches.
+- `js/farm-cows.js` – four dairy cows that each graze in one spot for ~50–70 s (head down, nibbling, tail swishing),
+  then lift their head, turn and walk to a new spot in their own patch of field, and graze again, forever. Patches stay
+  clear of the glass panel and the house, and cows keep a gap from each other. Decoration only — no game logic.
+  In a browser console, `FARM_COWS.walkAll()` sends every cow walking right away.
 - `assets/source/` – original images extracted from `HMB Booth.pdf` (`tools/extract-pdf-images.js`)
 
 To swap in final artwork, replace the files and keep the same names.
