@@ -550,7 +550,7 @@
   });
 
   // preload remaining art
-  ['assets/bg-farm.svg', 'assets/ensure-gold-logo.png', 'assets/ensure-gold-logo-hd.webp'].forEach(function (src) { new Image().src = src; });
+  ['assets/meadow/sky.webp', 'assets/meadow/hill-1.webp', 'assets/ensure-gold-logo.png', 'assets/ensure-gold-logo-hd.webp'].forEach(function (src) { new Image().src = src; });
 
   // debug helper for testing in a browser console:
   // GAME.go('home'|'select'|'video'), GAME.play('avocado'), GAME.tap()

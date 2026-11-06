@@ -73,15 +73,12 @@ All text uses **Chewy** (`assets/fonts/Chewy-Regular.ttf`), bundled with the gam
 - `assets/icons/*.png` – cropped from the PDF game mockup (`tools/crop-assets.js`; needs `npm i jpeg-js pngjs` to re-run)
 - `assets/icons/soybeans.svg`, `cauliflower.svg` – drawn to match (not in the mockup)
 - `assets/ensure-gold-logo.png` – cropped from the mockup glass; still used for the logo printed on the glass in the game
-- `assets/bg-farm.svg` – game-screen background, Malaysian dairy farm: sky and sun, misty Cameron Highlands ridges with tea
-  terraces, hazy city skyline, white fences, hay bales and a kampung house on stilts (static)
-- `assets/bg/` – animated layers drawn on top of it, behind all game UI (`.farm-bg` in `index.html`, styles in
-  `css/style.css`): drifting clouds, swaying banana trees and grass, hibiscus bushes, and two butterflies that cross
-  now and then. All motion is transform-only (GPU-composited) and the layer ignores touches.
-- `js/farm-cows.js` – four dairy cows that each graze in one spot for ~50–70 s (head down, nibbling, tail swishing),
-  then lift their head, turn and walk to a new spot in their own patch of field, and graze again, forever. Patches stay
-  clear of the glass panel and the house, and cows keep a gap from each other. Decoration only — no game logic.
-  In a browser console, `FARM_COWS.walkAll()` sends every cow walking right away.
+- `assets/meadow/` – game-screen background: the summer meadow from the "Spring and Summer – Green Earth" Premiere
+  template (Envato). Its Photoshop layers were exported to WebP at stage scale (2000×1125 → 1920×1080) and placed at
+  their original positions in `.meadow` (`index.html`): sky, rainbow, ten clouds that drift gently, rolling hills,
+  three bands of grass that sway at different speeds, five red flowers that sway from their stems, and four butterflies
+  built from the template's wing art that flap across the sky now and then. All motion is transform-only (GPU-composited)
+  and the layer ignores touches. The game UI sits on top and is unchanged.
 - `assets/source/` – original images extracted from `HMB Booth.pdf` (`tools/extract-pdf-images.js`)
 
 To swap in final artwork, replace the files and keep the same names.

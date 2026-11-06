@@ -64,21 +64,106 @@
 
     <!-- ============ GAME: FILL THE GLASS ============ -->
     <section id="game" class="screen" aria-label="Fill the glass">
-      <!-- animated Malaysian farm background (static scene is #game's background: assets/bg-farm.svg);
+      <!-- animated summer meadow background (layers from the "Spring and Summer – Green Earth" template);
            purely decorative, sits behind all game UI and ignores touches -->
-      <div class="farm-bg" aria-hidden="true">
-        <img class="cloud cloud-1" src="assets/bg/cloud.svg" alt="">
-        <img class="cloud cloud-2" src="assets/bg/cloud.svg" alt="">
-        <img class="cloud cloud-3" src="assets/bg/cloud.svg" alt="">
-        <img class="cloud cloud-4" src="assets/bg/cloud.svg" alt="">
-        <div class="butterfly butterfly-1"><img src="assets/bg/butterfly.svg" alt=""></div>
-        <div class="butterfly butterfly-2"><img src="assets/bg/butterfly.svg" alt=""></div>
-        <div class="farm-cows"></div><!-- filled by js/farm-cows.js -->
-        <img class="banana banana-l" src="assets/bg/banana-tree.svg" alt="">
-        <img class="banana banana-r" src="assets/bg/banana-tree.svg" alt="">
-        <img class="bush bush-l" src="assets/bg/hibiscus-bush.svg" alt="">
-        <img class="bush bush-r" src="assets/bg/hibiscus-bush.svg" alt="">
-        <img class="grass" src="assets/bg/grass.svg" alt="">
+      <div class="farm-bg meadow" aria-hidden="true">
+        <!-- sky -->
+        <img src="assets/meadow/sky.webp" style="left:0px;top:0px;width:1920px;height:1080px;" alt="">
+        <img src="assets/meadow/sky-glow.webp" style="left:0px;top:0px;width:1920px;height:1080px;" alt="">
+        <img src="assets/meadow/sky-top.webp" style="left:0px;top:0px;width:1920px;height:595px;" alt="">
+        <img class="m-overlay" src="assets/meadow/sky-light.webp" style="left:513.6px;top:53.8px;width:1682px;height:1350px;" alt="">
+        <!-- drifting clouds -->
+        <img class="m-cloud m-cloud-1" src="assets/meadow/cloud-1.webp" style="left:915.8px;top:210.2px;width:1000px;height:339px;" alt="">
+        <img class="m-cloud m-cloud-2" src="assets/meadow/cloud-2.webp" style="left:624px;top:529.9px;width:649px;height:224px;opacity:0.46;" alt="">
+        <img class="m-cloud m-cloud-3" src="assets/meadow/cloud-3.webp" style="left:-325.4px;top:-48px;width:1164px;height:394px;" alt="">
+        <img class="m-cloud m-cloud-4" src="assets/meadow/cloud-4.webp" style="left:1037.8px;top:22.1px;width:361px;height:123px;opacity:0.60;" alt="">
+        <img class="m-cloud m-cloud-5" src="assets/meadow/cloud-5.webp" style="left:97px;top:116.2px;width:741px;height:189px;" alt="">
+        <img class="m-cloud m-cloud-6" src="assets/meadow/cloud-6.webp" style="left:265.9px;top:428.2px;width:517px;height:130px;opacity:0.60;" alt="">
+        <img class="m-cloud m-cloud-7" src="assets/meadow/cloud-7.webp" style="left:1245.1px;top:428.2px;width:495px;height:155px;" alt="">
+        <img class="m-cloud m-cloud-8" src="assets/meadow/cloud-8.webp" style="left:1500.5px;top:98.9px;width:544px;height:168px;" alt="">
+        <img class="m-cloud m-cloud-9" src="assets/meadow/cloud-9.webp" style="left:783.4px;top:25px;width:610px;height:168px;" alt="">
+        <img class="m-cloud m-cloud-10" src="assets/meadow/cloud-10.webp" style="left:1153px;top:345.6px;width:526px;height:69px;" alt="">
+        <img class="m-rainbow" src="assets/meadow/rainbow.webp" style="left:357.1px;top:48px;width:944px;height:944px;" alt="">
+        <!-- rolling hills -->
+        <img src="assets/meadow/hill-1.webp" style="left:-957.1px;top:671px;width:3840px;height:416px;" alt="">
+        <img src="assets/meadow/hill-2.webp" style="left:-961px;top:728.6px;width:3844px;height:358px;" alt="">
+        <img src="assets/meadow/hill-3.webp" style="left:-957.1px;top:776.6px;width:3840px;height:310px;" alt="">
+        <!-- grass, back band (sways) -->
+        <div class="m-grass m-grass-back">
+          <img src="assets/meadow/grass-haze.webp" style="left:0px;top:740.2px;width:1920px;height:414px;opacity:0.50;" alt="">
+          <img src="assets/meadow/grass-a.webp" style="left:73.9px;top:812.2px;width:1320px;height:312px;" alt="">
+          <img src="assets/meadow/grass-b.webp" style="left:916.8px;top:808.3px;width:952px;height:316px;" alt="">
+          <img src="assets/meadow/grass-c.webp" style="left:593.3px;top:808.3px;width:1368px;height:305px;" alt="">
+          <img src="assets/meadow/grass-d.webp" style="left:557.8px;top:804.5px;width:1262px;height:299px;" alt="">
+          <img src="assets/meadow/grass-e.webp" style="left:1037.8px;top:804.5px;width:911px;height:302px;" alt="">
+          <img src="assets/meadow/grass-f.webp" style="left:-309.1px;top:817.9px;width:902px;height:214px;" alt="">
+          <img src="assets/meadow/grass-g.webp" style="left:1166.4px;top:785.3px;width:902px;height:214px;" alt="">
+        </div>
+        <!-- grass, mid band (sways) -->
+        <div class="m-grass m-grass-mid">
+          <img src="assets/meadow/grass-h.webp" style="left:293.8px;top:811.2px;width:1308px;height:293px;" alt="">
+          <img src="assets/meadow/grass-i.webp" style="left:80.6px;top:831.4px;width:944px;height:267px;" alt="">
+          <img src="assets/meadow/grass-j.webp" style="left:438.7px;top:831.4px;width:682px;height:270px;" alt="">
+          <img src="assets/meadow/grass-k.webp" style="left:-117.1px;top:837.1px;width:978px;height:262px;" alt="">
+          <img src="assets/meadow/grass-l.webp" style="left:17.3px;top:831.4px;width:868px;height:270px;" alt="">
+          <img src="assets/meadow/grass-m.webp" style="left:-17.3px;top:878.4px;width:380px;height:223px;" alt="">
+          <img src="assets/meadow/grass-n.webp" style="left:1213.4px;top:820.8px;width:867px;height:270px;" alt="">
+          <img src="assets/meadow/grass-o.webp" style="left:1177.9px;top:866.9px;width:381px;height:224px;" alt="">
+          <img src="assets/meadow/grass-p.webp" style="left:-19.2px;top:848.6px;width:1186px;height:265px;" alt="">
+        </div>
+        <!-- grass, front band (sways) -->
+        <div class="m-grass m-grass-front">
+          <img src="assets/meadow/plant-3.webp" style="left:1696.3px;top:913.9px;width:264px;height:136px;" alt="">
+          <img src="assets/meadow/grass-q.webp" style="left:66.2px;top:716.2px;width:1702px;height:402px;" alt="">
+          <img src="assets/meadow/grass-r.webp" style="left:20.2px;top:704.6px;width:1860px;height:416px;" alt="">
+          <img src="assets/meadow/plant-2.webp" style="left:1075.2px;top:887px;width:342px;height:201px;" alt="">
+          <img src="assets/meadow/plant-1.webp" style="left:130.6px;top:876.5px;width:232px;height:228px;" alt="">
+          <img src="assets/meadow/grass-s.webp" style="left:-20.2px;top:812.2px;width:1318px;height:295px;" alt="">
+          <img src="assets/meadow/grass-front-haze.webp" style="left:-344.6px;top:755.5px;width:2389px;height:429px;opacity:0.30;" alt="">
+        </div>
+        <!-- flowers sway from the base of their stems -->
+        <div class="m-flower m-flower-1" style="left:53.8px;top:637.4px;width:203px;height:538.1px;transform-origin:75.4px 538.1px;">
+          <img src="assets/meadow/stem-1.webp" style="left:12.4px;top:71.1px;width:126px;height:467px;" alt="">
+          <img src="assets/meadow/flower-1.webp" style="left:0px;top:0px;width:203px;height:210px;" alt="">
+        </div>
+        <div class="m-flower m-flower-2" style="left:1406.4px;top:728.6px;width:211px;height:492.8px;transform-origin:95.2px 492.8px;">
+          <img src="assets/meadow/stem-2.webp" style="left:67.2px;top:76.8px;width:56px;height:416px;" alt="">
+          <img src="assets/meadow/flower-2.webp" style="left:0px;top:0px;width:211px;height:222px;" alt="">
+        </div>
+        <div class="m-flower m-flower-3" style="left:1740.5px;top:840px;width:108px;height:253.6px;transform-origin:60.3px 253.6px;">
+          <img src="assets/meadow/stem-3.webp" style="left:51.8px;top:33.6px;width:17px;height:220px;" alt="">
+          <img src="assets/meadow/flower-3.webp" style="left:0px;top:0px;width:108px;height:109px;" alt="">
+        </div>
+        <div class="m-flower m-flower-4" style="left:1098.2px;top:620.2px;width:149.4px;height:381.8px;transform-origin:106.4px 381.8px;">
+          <img src="assets/meadow/stem-4.webp" style="left:63.4px;top:50.8px;width:86px;height:331px;" alt="">
+          <img src="assets/meadow/flower-4.webp" style="left:0px;top:0px;width:140px;height:124px;" alt="">
+        </div>
+        <div class="m-flower m-flower-5" style="left:421.4px;top:827.5px;width:91.8px;height:237.7px;transform-origin:27px 237.7px;">
+          <img src="assets/meadow/stem-5.webp" style="left:0px;top:31.7px;width:54px;height:206px;" alt="">
+          <img src="assets/meadow/flower-5.webp" style="left:6.8px;top:0px;width:85px;height:77px;" alt="">
+        </div>
+        <img class="m-multiply" src="assets/meadow/ground-shade.webp" style="left:0px;top:925.4px;width:1920px;height:155px;opacity:0.50;" alt="">
+        <!-- butterflies flutter across now and then -->
+        <div class="m-bfly m-bfly-1" style="aspect-ratio:356.5 / 361.0;"><div class="m-bfly-inner">
+          <img class="m-wing m-wing-l" src="assets/meadow/bfly1-wing-l.webp" style="left:0.00%;top:0.00%;width:49.09%;height:100.00%;" alt="">
+          <img class="m-wing m-wing-r" src="assets/meadow/bfly1-wing-r.webp" style="left:50.91%;top:0.00%;width:49.09%;height:100.00%;" alt="">
+          <img src="assets/meadow/bfly1-body.webp" style="left:41.74%;top:9.83%;width:14.87%;height:54.57%;" alt="">
+        </div></div>
+        <div class="m-bfly m-bfly-2" style="aspect-ratio:363.2 / 361.0;"><div class="m-bfly-inner">
+          <img class="m-wing m-wing-l" src="assets/meadow/bfly2-wing-l.webp" style="left:0.00%;top:0.00%;width:48.46%;height:100.00%;" alt="">
+          <img class="m-wing m-wing-r" src="assets/meadow/bfly2-wing-r.webp" style="left:51.82%;top:0.00%;width:48.18%;height:100.00%;" alt="">
+          <img src="assets/meadow/bfly2-body.webp" style="left:42.81%;top:9.83%;width:14.59%;height:54.57%;" alt="">
+        </div></div>
+        <div class="m-bfly m-bfly-3" style="aspect-ratio:356.5 / 361.0;"><div class="m-bfly-inner">
+          <img class="m-wing m-wing-l" src="assets/meadow/bfly1-wing-l.webp" style="left:0.00%;top:0.00%;width:49.09%;height:100.00%;" alt="">
+          <img class="m-wing m-wing-r" src="assets/meadow/bfly1-wing-r.webp" style="left:50.91%;top:0.00%;width:49.09%;height:100.00%;" alt="">
+          <img src="assets/meadow/bfly1-body.webp" style="left:41.74%;top:9.83%;width:14.87%;height:54.57%;" alt="">
+        </div></div>
+        <div class="m-bfly m-bfly-4" style="aspect-ratio:363.2 / 361.0;"><div class="m-bfly-inner">
+          <img class="m-wing m-wing-l" src="assets/meadow/bfly2-wing-l.webp" style="left:0.00%;top:0.00%;width:48.46%;height:100.00%;" alt="">
+          <img class="m-wing m-wing-r" src="assets/meadow/bfly2-wing-r.webp" style="left:51.82%;top:0.00%;width:48.18%;height:100.00%;" alt="">
+          <img src="assets/meadow/bfly2-body.webp" style="left:42.81%;top:9.83%;width:14.59%;height:54.57%;" alt="">
+        </div></div>
       </div>
 
       <h2 class="game-title">Tap the <span id="gameWord">food</span> to fill up the glass<br>of Ensure Gold!!</h2>
@@ -179,7 +264,6 @@
 
   <script src="js/foods.js"></script>
   <script src="js/game.js"></script>
-  <script src="js/farm-cows.js"></script>
   <script src="js/home-bg.js"></script>
 </body>
 </html>
