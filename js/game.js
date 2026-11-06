@@ -506,6 +506,9 @@
   video.addEventListener('error', showPlaceholder);
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
   video.addEventListener('ended', goHome);
+  $('#skipBtn').addEventListener('click', function () {
+    if (state.screen === 'video') goHome();
+  });
 
   /* ---------------- reset / idle ---------------- */
   function goHome() {
