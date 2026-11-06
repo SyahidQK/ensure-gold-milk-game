@@ -34,9 +34,23 @@ Opening `index.html` straight from disk also works in Chrome.
 
 Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-right corner** for 3 seconds.
 
-## Adding the client CaHMB video
-Drop the file at `assets/video/hmb.mp4` (H.264 MP4, 1920×1080). Nothing else to change.
-Until it exists, a "CaHMB Video – Coming soon" screen shows for 6 seconds instead.
+## CaHMB video
+`assets/video/hmb.mp4` is the client's "Ensure Armour (HMB & YBG) MOA Video" (2:06, 1920×1080, 25 fps).
+The original export was 293 MB (19.4 Mbps), over GitHub's 100 MB file limit, so it was re-encoded to 78 MB
+(H.264 High, two-pass ~4.8 Mbps, AAC 128 kbps, `faststart` so playback begins instantly). SSIM vs the original: 0.994.
+
+To replace it, drop a new file at the same path. To re-encode a large export the same way
+(ffmpeg ships with Shutter Encoder at `C:\Program Files\Shutter Encoder\app\Library\ffmpeg.exe`):
+
+```bash
+ffmpeg -i input.mp4 -c:v libx264 -preset slow -b:v 4800k -pass 1 -an -f mp4 NUL
+```
+
+```bash
+ffmpeg -i input.mp4 -c:v libx264 -preset slow -b:v 4800k -maxrate 7000k -bufsize 9600k -pass 2 -profile:v high -level 4.1 -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart assets/video/hmb.mp4
+```
+
+If the file is ever missing, a "CaHMB Video – Coming soon" screen shows for 6 seconds instead.
 
 ## Background music
 `assets/audio/bgm.mp3` plays from 0:09 and loops back to 0:09 when it ends. It fades out while the video screen is showing and fades back in afterwards.
