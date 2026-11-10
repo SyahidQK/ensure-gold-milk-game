@@ -39,9 +39,10 @@ Opening `index.html` straight from disk also works in Chrome.
 Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 seconds.
 
 ## CaHMB video
-`assets/video/hmb.mp4` is the client's "Ensure Armour (HMB & YBG) MOA Video" (2:06, 1920×1080, 25 fps).
-The original export was 293 MB (19.4 Mbps), over GitHub's 100 MB file limit, so it was re-encoded to 78 MB
-(H.264 High, two-pass ~4.8 Mbps, AAC 128 kbps, `faststart` so playback begins instantly). SSIM vs the original: 0.994.
+`assets/video/hmb.mp4` is the client's game video "ensure gold game video.mp4" (1:03, 1920×1080, 30 fps, H.264 + AAC,
+75 MB). It was already under GitHub's 100 MB limit, so it was only remuxed with `faststart` (no re-encode, no quality
+change) so playback begins instantly. The source copy in the project root is ignored by Git. If a future export is
+over 100 MB, re-encode it with the commands below.
 
 To replace it, drop a new file at the same path. To re-encode a large export the same way
 (ffmpeg ships with Shutter Encoder at `C:\Program Files\Shutter Encoder\app\Library\ffmpeg.exe`):
