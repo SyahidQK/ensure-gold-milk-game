@@ -4,3 +4,5 @@ Thumbs.db
 .claude/settings.local.json
 # source copy of the game video (the game uses assets/video/hmb.mp4)
 ensure gold game video.mp4
+# Chrome profile created by "Start Fill It Gold.bat"
+.kiosk-profile/

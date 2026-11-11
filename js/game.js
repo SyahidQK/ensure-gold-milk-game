@@ -141,10 +141,15 @@
   startBgm();
   document.addEventListener('pointerdown', startBgm, true);
 
+  // fading to 0 ends with the music paused (not just muted) so it doesn't run alongside the video;
+  // fading back up resumes it from where it stopped
   function fadeBgm(to) {
     bgmTargetVol = to;
     clearInterval(bgmFade);
-    if (to > 0) bgm.muted = false;
+    if (to > 0) {
+      bgm.muted = false;
+      if (bgmStarted && bgm.paused) bgm.play().catch(function () {});
+    }
     var from = bgm.volume;
     var t0 = performance.now();
     bgmFade = setInterval(function () {
@@ -152,7 +157,7 @@
       bgm.volume = from + (to - from) * k;
       if (k >= 1) {
         clearInterval(bgmFade);
-        if (to === 0) bgm.muted = true;
+        if (to === 0) { bgm.muted = true; bgm.pause(); }
       }
     }, 30);
   }
@@ -160,8 +165,23 @@
   function unmuteBgm() { if (bgmTargetVol !== CFG.bgmVolume) fadeBgm(CFG.bgmVolume); }
 
   /* ---------------- screens ---------------- */
+  // Screens that aren't showing are switched fully off ("is-off") once their fade-out ends, so their
+  // animations and graphics layers don't compete with what is on screen (especially the video).
+  var offTimers = {};
   function show(name) {
-    Object.keys(screens).forEach(function (k) { screens[k].classList.toggle('is-active', k === name); });
+    Object.keys(screens).forEach(function (k) {
+      var el = screens[k];
+      clearTimeout(offTimers[k]);
+      if (k === name) {
+        el.classList.remove('is-off');
+        el.classList.add('is-active');
+      } else if (el.classList.contains('is-active')) {
+        el.classList.remove('is-active');
+        offTimers[k] = setTimeout(function () { el.classList.add('is-off'); }, 600);  // after the .5s fade
+      } else {
+        el.classList.add('is-off');
+      }
+    });
     state.screen = name;
     if (name === 'video') muteBgm(); else unmuteBgm();
     bumpIdle();
@@ -459,16 +479,22 @@
     }
   }
 
-  /* ---------------- CaHMB video ---------------- */
+  /* ---------------- CaHMB video ----------------
+     The video is loaded once at startup and kept loaded (never unloaded between plays), so it is
+     already buffered and decoded when it's needed — no cold start, no re-reading the 75 MB file. */
   var videoWatch = null;
+  function loadVideo() {
+    video.src = CFG.videoSrc;
+    video.load();
+  }
   function playVideo() {
     clearTimers();
     show('video');
     placeholder.classList.remove('is-shown');
     video.style.display = '';
     video.muted = false;
-    video.src = CFG.videoSrc;
-    video.currentTime = 0;
+    if (video.error || !video.currentSrc) loadVideo();  // only if it failed or was never loaded
+    if (video.currentTime !== 0) video.currentTime = 0;
 
     var p = video.play();
     if (p && p.catch) {
@@ -489,8 +515,6 @@
     if (state.screen !== 'video' || placeholder.classList.contains('is-shown')) return;
     clearTimeout(videoWatch);
     video.pause();
-    video.removeAttribute('src');
-    video.load();
     video.style.display = 'none';
     placeholder.classList.add('is-shown');
     var left = Math.round(CFG.placeholderMs / 1000);
@@ -503,6 +527,7 @@
     })();
   }
 
+  loadVideo();
   video.addEventListener('error', showPlaceholder);
   video.addEventListener('playing', function () { clearTimeout(videoWatch); });
   video.addEventListener('ended', goHome);
@@ -514,8 +539,7 @@
   function goHome() {
     clearTimers();
     video.pause();
-    video.removeAttribute('src');
-    video.load();
+    if (video.currentSrc && !video.error && video.currentTime !== 0) video.currentTime = 0;  // rewind, stay loaded
     resetRound();
     resetSelect();
     show('info');
@@ -572,4 +596,61 @@
   };
 
   goHome();
+
+  /* ---------------- smoothness check: index.html?check ----------------
+     Plays the whole game by itself in a loop (main page → food → fill → video → home) and shows how
+     many video frames were shown / dropped, so the booth PC can be stress-tested unattended.
+     Normal launches never run this. */
+  if (/[?&]check\b/.test(location.search)) (function () {
+    var hud = document.createElement('div');
+    hud.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:9999;padding:8px 14px;border-radius:10px;' +
+      'background:rgba(0,0,0,.72);color:#fff;font:14px/1.4 Segoe UI,system-ui,sans-serif;pointer-events:none;white-space:pre;';
+    document.body.appendChild(hud);
+
+    var cycle = 0, total = { shown: 0, dropped: 0 }, last = null, base = null, step = null;
+    function q() {
+      var p = video.getVideoPlaybackQuality ? video.getVideoPlaybackQuality() : null;
+      return p ? { shown: p.totalVideoFrames, dropped: p.droppedVideoFrames } : { shown: 0, dropped: 0 };
+    }
+    function pct(d, s) { return s ? (d / s * 100).toFixed(2) + '%' : '–'; }
+    function render() {
+      var now = state.screen === 'video' && base ? q() : null;
+      hud.textContent = 'SMOOTHNESS CHECK · cycle ' + cycle + ' · screen: ' + state.screen +
+        (now ? '\nthis video: ' + (now.shown - base.shown) + ' frames, ' + (now.dropped - base.dropped) + ' dropped' : '') +
+        (last ? '\nlast video: ' + last.shown + ' frames, ' + last.dropped + ' dropped (' + pct(last.dropped, last.shown) + ')' : '') +
+        '\nall videos: ' + total.shown + ' frames, ' + total.dropped + ' dropped (' + pct(total.dropped, total.shown) + ')';
+    }
+    video.addEventListener('playing', function () { if (!base) base = q(); });
+    function videoDone() {
+      if (!base) return;
+      var now = q();
+      last = { shown: now.shown - base.shown, dropped: now.dropped - base.dropped };
+      total.shown += last.shown;
+      total.dropped += last.dropped;
+      base = null;
+    }
+
+    setInterval(function () {
+      if (state.screen !== 'video' && base) videoDone();
+      if (state.screen === step) { render(); return; }
+      step = state.screen;
+      if (step === 'info') {
+        cycle++;
+        later(function () { if (state.screen === 'info') showSelect(); }, 2000);
+      } else if (step === 'select') {
+        later(function () {
+          if (state.screen !== 'select') return;
+          selectFood(FOODS[Math.floor(Math.random() * FOODS.length)]);
+          startGame(state.food);
+        }, 1500);
+      } else if (step === 'game') {
+        var tapper = setInterval(function () {
+          if (state.screen !== 'game' || state.phase !== 'play') { clearInterval(tapper); return; }
+          state.lastTap = -1e9;
+          onTap();
+        }, 260);
+      }
+      render();
+    }, 250);
+  })();
 })();

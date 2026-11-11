@@ -21,22 +21,37 @@ Offline HTML/CSS/JS game for a 1920×1080 landscape touch TV. No build step, no 
 
 A food choice or game left untouched for 60 s goes back to the main page for the next player.
 
-## Run at the booth
-Recommended (local server, so the video can seek):
+## Run at the booth (fully offline)
+The game needs **no internet and no server**: the font, images, music and video are all in this folder.
 
-```bash
-node tools/serve.js 8080
-```
+**Double-click `Start Fill It Gold.bat`.** It opens the game full-screen in Chrome straight from this folder, in its
+own clean Chrome profile (`.kiosk-profile/`, so no extensions, sign-in or sync run alongside), with sound allowed
+to start by itself and Chrome's background slow-downs switched off. If Chrome isn't installed it uses Edge.
+It works wherever the folder is copied (e.g. to the booth laptop's desktop).
 
-Then open Chrome in kiosk mode:
+Exit: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 seconds.
 
-```bash
-"C:\Program Files\Google\Chrome\Application\chrome.exe" --kiosk --autoplay-policy=no-user-gesture-required --disable-pinch --overscroll-history-navigation=0 http://localhost:8080
-```
+### Laptop setup for smooth video (do once on the booth laptop)
+- Windows **Settings → System → Display → Graphics** → add / pick **Google Chrome** → **High performance**
+  (so Chrome uses the NVIDIA graphics card, not the built-in one). Restart Chrome afterwards.
+- Keep the laptop **plugged in**, and set **Settings → System → Power → Power mode → Best performance**.
+- **Screen and sleep → Never** (on power), so the TV never goes dark.
+- Turn on **Do not disturb** / turn off notifications, and close other apps (Teams, OneDrive syncing, updates).
 
-Opening `index.html` straight from disk also works in Chrome.
+### Check smoothness on the booth laptop
+Double-click **`Run Smoothness Check.bat`**. The game plays itself in a loop (main page → food → fill → video →
+main page) and a small readout in the bottom-left shows how many video frames were shown and dropped, per video and
+in total. Let it run for a few cycles: 0–0.5% dropped is smooth. Exit with `Alt+F4`.
+(Same as opening `index.html?check`.)
 
-Exit kiosk: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 seconds.
+### How the game keeps the video smooth
+- The video is loaded once when the game starts and stays loaded (rewound after each play), so it is ready instantly.
+- Screens that aren't showing are switched off once they fade out: their animations pause and they stop using
+  graphics memory, so nothing else competes with the video.
+- The background music is paused (not just muted) while the video plays, and carries on afterwards.
+
+### Optional: local server
+For development you can also serve the folder with `node tools/serve.js 8080` and open `http://localhost:8080`.
 
 ## CaHMB video
 `assets/video/hmb.mp4` is the client's game video "ensure gold game video.mp4" (1:03, 1920×1080, 30 fps, H.264 + AAC,

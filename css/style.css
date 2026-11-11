@@ -69,6 +69,10 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   visibility: visible;
   transition: opacity .5s ease;
 }
+/* screens that aren't showing do no work: animations paused, and once their fade-out has
+   finished (JS adds .is-off) they aren't painted at all, freeing graphics memory for the video */
+.screen:not(.is-active) * { animation-play-state: paused !important; }
+.screen.is-off { content-visibility: hidden; }
 
 .gold { color: var(--gold-light); }
 /* brand terms like "CaHMB" keep their casing inside UPPERCASE headings */
