@@ -1,0 +1,3 @@
+# Windows batch files: store exactly as written (CRLF), so copies and GitHub downloads stay runnable
+*.bat -text
+*.cmd -text

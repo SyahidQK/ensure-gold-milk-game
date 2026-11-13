@@ -31,6 +31,18 @@ It works wherever the folder is copied (e.g. to the booth laptop's desktop).
 
 Exit: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 seconds.
 
+### If the launcher doesn't start on another PC
+1. **Copy or extract the whole folder first.** Don't run the launcher from inside a ZIP: right-click the ZIP →
+   **Extract All…**, then open the extracted folder. The folder must contain `index.html`, `css`, `js` and `assets`.
+2. **"Windows protected your PC"** (blue box): click **More info → Run anyway**. Files copied from the internet or
+   another PC can be blocked by Windows; you can also right-click the .bat → Properties → tick **Unblock** → OK.
+3. **Read the message.** If something is wrong the launcher window stays open and says why, and writes the details
+   to `launcher-log.txt` in the game folder (send that file for help).
+4. **No Chrome?** The launcher finds Chrome or Edge automatically (including unusual install locations). If neither
+   is installed it says so: install Google Chrome.
+5. **Fallback:** double-clicking `index.html` in the folder also runs the game offline in any modern browser
+   (press F11 for full screen).
+
 ### Laptop setup for smooth video (do once on the booth laptop)
 - Windows **Settings → System → Display → Graphics** → add / pick **Google Chrome** → **High performance**
   (so Chrome uses the NVIDIA graphics card, not the built-in one). Restart Chrome afterwards.

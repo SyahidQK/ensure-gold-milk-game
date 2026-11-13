@@ -6,3 +6,5 @@ Thumbs.db
 ensure gold game video.mp4
 # Chrome profile created by "Start Fill It Gold.bat"
 .kiosk-profile/
+# written by "Start Fill It Gold.bat" each time it runs
+launcher-log.txt
