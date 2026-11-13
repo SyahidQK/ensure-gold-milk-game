@@ -78,17 +78,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* brand terms like "CaHMB" keep their casing inside UPPERCASE headings */
 .keep-case { text-transform: none; }
 
-/* HD logo: the artwork sits in a 1268x648 area of a 2000x1024 transparent image; crop to it */
-.home-logo, .select-logo {
-  position: relative;
-  aspect-ratio: 1268 / 648;
-  overflow: hidden;
-}
+/* HD logo (assets/ensure-gold-logo-hd.webp): transparent, already cropped to the artwork */
+.home-logo, .select-logo { position: relative; }
 .home-logo img, .select-logo img {
-  position: absolute;
-  width: calc(2000 / 1268 * 100%);
-  left: calc(-366 / 1268 * 100%);
-  top: calc(-188 / 648 * 100%);
+  display: block;
+  width: 100%;
+  height: auto;
   filter: drop-shadow(0 6px 14px rgba(0,0,0,.45));
 }
 
@@ -928,7 +923,7 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   transition: transform .12s ease, background .2s ease;
 }
 .skip-btn:active { transform: scale(.94); background: rgba(10,26,82,.8); }
-.vp-logo { width: 760px; margin: -60px 0 -80px; }
+.vp-logo { width: 600px; }
 .vp-title { margin-top: 20px; font-size: 120px; color: var(--gold-light); letter-spacing: 2px; }
 .vp-sub { font-size: 60px; color: #d8e4ff; }
 .vp-count { margin-top: 60px; font-size: 34px; color: #9fb4e8; }
