@@ -25,7 +25,8 @@ A food choice or game left untouched for 60 s goes back to the main page for the
 The game needs **no internet and no server**: the font, images, music and video are all in this folder.
 
 **Double-click `Start Fill It Gold.bat`.** It opens the game full-screen in Chrome straight from this folder, in its
-own clean Chrome profile (`.kiosk-profile/`, so no extensions, sign-in or sync run alongside), with sound allowed
+own clean Chrome profile, kept on the PC in `%LOCALAPPDATA%FillItGold` (not in the game folder, so the folder can sit on
+any drive, e.g. a USB or D: drive, and be copied freely; no extensions, sign-in or sync run alongside), with sound allowed
 to start by itself and Chrome's background slow-downs switched off. If Chrome isn't installed it uses Edge.
 It works wherever the folder is copied (e.g. to the booth laptop's desktop).
 
@@ -36,12 +37,17 @@ Exit: `Alt+F4`. Hidden reset: press and hold the **top-left corner** for 3 secon
    **Extract All…**, then open the extracted folder. The folder must contain `index.html`, `css`, `js` and `assets`.
 2. **"Windows protected your PC"** (blue box): click **More info → Run anyway**. Files copied from the internet or
    another PC can be blocked by Windows; you can also right-click the .bat → Properties → tick **Unblock** → OK.
-3. **Read the message.** If something is wrong the launcher window stays open and says why, and writes the details
+3. **It checks the game really opened.** If the browser closes straight away, the launcher clears its settings and
+   tries again; if that also fails it opens the game in the PC's normal browser (press F11 for full screen).
+4. **Read the message.** If something is wrong the launcher window stays open and says why, and writes the details
    to `launcher-log.txt` in the game folder (send that file for help).
-4. **No Chrome?** The launcher finds Chrome or Edge automatically (including unusual install locations). If neither
+5. **No Chrome?** The launcher finds Chrome or Edge automatically (including unusual install locations). If neither
    is installed it says so: install Google Chrome.
-5. **Fallback:** double-clicking `index.html` in the folder also runs the game offline in any modern browser
+6. **Fallback:** double-clicking `index.html` in the folder also runs the game offline in any modern browser
    (press F11 for full screen).
+7. **Check the PC's date and time** are correct (Settings → Time & language → Set time automatically).
+8. A `.kiosk-profile` folder left inside the game folder by older versions of the launcher is no longer used and can
+   be deleted.
 
 ### Laptop setup for smooth video (do once on the booth laptop)
 - Windows **Settings → System → Display → Graphics** → add / pick **Google Chrome** → **High performance**
